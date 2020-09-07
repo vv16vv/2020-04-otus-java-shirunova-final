@@ -1,6 +1,7 @@
 package ru.otus.vsh.knb.dbCore;
 
 import lombok.val;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.knb.dbCore.dbService.DBServicePerson;
 import ru.otus.vsh.knb.dbCore.model.Account;
@@ -9,9 +10,11 @@ import ru.otus.vsh.knb.dbCore.model.Person;
 @Component
 public class DataInitializerImpl implements DataInitializer {
     private final DBServicePerson dbServicePerson;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataInitializerImpl(DBServicePerson dbServicePerson) {
+    public DataInitializerImpl(DBServicePerson dbServicePerson, PasswordEncoder passwordEncoder) {
         this.dbServicePerson = dbServicePerson;
+        this.passwordEncoder = passwordEncoder;
 
         createInitialData();
     }
@@ -28,19 +31,19 @@ public class DataInitializerImpl implements DataInitializer {
         val player1 = Person.builder()
                 .login("vitkus")
                 .name("Виктория")
-                .password("12345")
+                .password(passwordEncoder.encode("12345"))
                 .account(createDefaultAccount())
                 .get();
         val player2 = Person.builder()
                 .login("sevantius")
                 .name("Всеволод")
-                .password("11111")
+                .password(passwordEncoder.encode("11111"))
                 .account(createDefaultAccount())
                 .get();
         val player3 = Person.builder()
                 .login("koshir")
                 .name("Константин")
-                .password("24680")
+                .password(passwordEncoder.encode("24680"))
                 .account(createDefaultAccount())
                 .get();
 
