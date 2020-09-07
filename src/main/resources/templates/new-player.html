@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<head>
+    <title>Login</title>
+    <meta charset="utf-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/knb.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="top">
+    <form id="new-player-form" th:action="@{${route}}" th:object="${player}" th:method="post" accept-charset="utf-8">
+
+        <table class="layoutTable">
+            <tr>
+                <th style="width: 20%">Логин</th>
+                <td><input id="login-input" type="text" name="login" th:value="${player.login}" value="" required></td>
+            </tr>
+            <tr>
+                <th>Имя</th>
+                <td><input id="name-input" type="text" name="name" th:value="${player.name}" value="" required></td>
+            </tr>
+            <tr>
+                <th>Пароль</th>
+                <td><input id="password-input" type="password" name="password" th:value="${player.password}" value=""
+                           required></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Добавить"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
