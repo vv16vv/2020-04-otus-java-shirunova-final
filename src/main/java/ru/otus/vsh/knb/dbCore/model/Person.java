@@ -1,8 +1,11 @@
 package ru.otus.vsh.knb.dbCore.model;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +20,7 @@ import javax.persistence.*;
 })
 @Entity
 @Table(name = "z7_persons")
-public class Person implements Model {
+public class Person implements Model, UserDetails {
     public static final String GET_PERSON_BY_LOGIN = "get_user_by_login";
 
     @Id
@@ -38,4 +41,35 @@ public class Person implements Model {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // there are no different access permissions.
+        // player is either allowed to do anything or not allowed at all
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
