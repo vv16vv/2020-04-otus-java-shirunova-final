@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.webCore.services;
+package ru.otus.vsh.knb.dbCore;
 
 import lombok.val;
 import org.springframework.stereotype.Component;
