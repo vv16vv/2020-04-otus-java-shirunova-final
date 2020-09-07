@@ -26,3 +26,27 @@ body {
 .mistake {
     color: firebrick;
 }
+
+a:link {
+    color: azure;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:visited {
+    color: azure;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FFFFFF;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:active {
+    color: azure;
+    background-color: transparent;
+    text-decoration: underline;
+}
