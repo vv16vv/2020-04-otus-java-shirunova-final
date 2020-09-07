@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Administration</title>
+    <meta charset="utf-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/knb.css" rel="stylesheet"/>
+</head>
+
+<body>
+<h4>Существующие пользователи</h4>
+<table class="borderedTable">
+    <thead>
+    <tr>
+        <th class="borderedTable" style="width: 10%">#</th>
+        <th class="borderedTable" style="width: 25%">Логин</th>
+        <th class="borderedTable" style="width: 25%">Пароль</th>
+        <th class="borderedTable">Имя</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="player : ${players}">
+        <td class="borderedTable" th:text="${player.id}"></td>
+        <td class="borderedTable" th:text="${player.login}"></td>
+        <td class="borderedTable" th:text="${player.password}"></td>
+        <td class="borderedTable" th:text="${player.name}"></td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{${login}}">Назад</a>
+</body>
+</html>
