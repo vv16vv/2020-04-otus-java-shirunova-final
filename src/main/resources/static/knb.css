@@ -1,0 +1,28 @@
+table .layoutTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.borderedTable {
+    border: 1px solid azure;
+}
+
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+
+input, select {
+    width: 100%;
+}
+
+body {
+    background-color: darkblue;
+    color: azure;
+    padding: 20px;
+    margin: 10px;
+}
+
+.mistake {
+    color: firebrick;
+}
