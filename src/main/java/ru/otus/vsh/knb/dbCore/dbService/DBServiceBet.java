@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface DBServiceBet extends DBService<Bet> {
     List<Bet> findByPersonInGame(PersonsInGames person);
+    List<Bet> findCommonBets(PersonsInGames person1, PersonsInGames person2);
 }

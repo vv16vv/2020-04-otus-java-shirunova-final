@@ -8,6 +8,7 @@ import ru.otus.vsh.knb.dbCore.dbService.api.AbstractDbServiceImpl;
 import ru.otus.vsh.knb.dbCore.model.Bet;
 import ru.otus.vsh.knb.dbCore.model.PersonsInGames;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -30,4 +31,21 @@ public class DbServiceBetImpl extends AbstractDbServiceImpl<Bet> implements DBSe
             return foundBets;
         }, person);
     }
+
+    @Override
+    public List<Bet> findCommonBets(PersonsInGames person1, PersonsInGames person2) {
+        String p1 = "p1";
+        String p2 = "p2";
+        val params = new HashMap<String, PersonsInGames>(2);
+        params.put(p1, person1);
+        params.put(p2, person2);
+        return executeInSession((sm, pigs) -> {
+            val foundBets = betDao.findCommonBets(pigs.get(p1), pigs.get(p2));
+            log.info("found bets: {}", foundBets);
+            sm.commitSession();
+
+            return foundBets;
+        }, params);
+    }
+
 }

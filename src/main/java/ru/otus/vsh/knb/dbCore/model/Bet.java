@@ -16,11 +16,16 @@ import javax.persistence.*;
         @NamedQuery(
                 name = Bet.GET_BETS_BY_PIG,
                 query = "select b from Bet b where person1.id = :personId or person2.id = :personId"
+        ),
+        @NamedQuery(
+                name = Bet.GET_BETS_BY_PIGS,
+                query = "select b from Bet b where (person1.id = :person1Id and person2.id = :person2Id) or (person1.id = :person2Id and person2.id = :person1Id)"
         )
 })
 @Table(name = "z1_bets")
 public class Bet implements Model {
     public static final String GET_BETS_BY_PIG = "get_bets_by_pig";
+    public static final String GET_BETS_BY_PIGS = "get_bets_by_pigs";
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

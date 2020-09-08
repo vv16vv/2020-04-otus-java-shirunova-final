@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BetDao extends Dao<Bet> {
     List<Bet> findByPersonInGame(PersonsInGames person);
+    List<Bet> findCommonBets(PersonsInGames person1, PersonsInGames person2);
 }
