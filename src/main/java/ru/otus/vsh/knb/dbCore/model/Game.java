@@ -25,18 +25,21 @@ public class Game implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @ManyToOne(targetEntity = GameSettings.class, optional = false, cascade = CascadeType.ALL)
     private GameSettings settings;
 
     @Column(name = "actualResult", nullable = false)
-    private int actualResult;
+    @Builder.Default
+    private int actualResult = EventResults.Unknown.id();
 
     @Column(name = "isCompleted", nullable = false)
-    private boolean isCompleted;
+    @Builder.Default
+    private boolean isCompleted = false;
 
-    public EventResults getActualResult(){
+    public EventResults getActualResult() {
         return EventResults.fromId(actualResult);
     }
 

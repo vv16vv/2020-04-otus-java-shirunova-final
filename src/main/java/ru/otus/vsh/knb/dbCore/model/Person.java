@@ -26,7 +26,8 @@ public class Person implements Model, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @Column(name = "login", unique = true, nullable = false)
     private String login;

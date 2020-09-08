@@ -17,7 +17,8 @@ public class Account implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @Column(name = "sum", nullable = false)
     private long sum;

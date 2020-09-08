@@ -25,7 +25,8 @@ public class PersonsInGames implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @ManyToOne(targetEntity = Game.class, cascade = CascadeType.ALL)
     private Game game;
@@ -36,7 +37,7 @@ public class PersonsInGames implements Model {
     @Column(name = "role", nullable = false)
     private int role;
 
-    public Roles getRole(){
+    public Roles getRole() {
         return Roles.fromId(role);
     }
 

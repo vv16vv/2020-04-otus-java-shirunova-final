@@ -25,13 +25,15 @@ public class Bet implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @ManyToOne(targetEntity = PersonsInGames.class, cascade = CascadeType.ALL)
     private PersonsInGames person1;
 
     @ManyToOne(targetEntity = PersonsInGames.class, cascade = CascadeType.ALL)
-    private PersonsInGames person2;
+    @Builder.Default
+    private PersonsInGames person2 = null;
 
     @Column(name = "expectedResult")
     private int expectedResult;
@@ -40,9 +42,10 @@ public class Bet implements Model {
     private long wager;
 
     @Column(name = "isClosed")
-    private boolean isClosed;
+    @Builder.Default
+    private boolean isClosed = false;
 
-    public EventResults getExpectedResult(){
+    public EventResults getExpectedResult() {
         return EventResults.fromId(expectedResult);
     }
 }

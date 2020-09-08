@@ -27,14 +27,22 @@ public class GameSettings implements Model {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    @Builder.Default
+    private long id = 0L;
 
     @Column(name = "numberOfItems", nullable = false)
-    private int numberOfItems;
+    @Builder.Default
+    private int numberOfItems = 3;
 
     @Column(name = "numberOfTurns", nullable = false)
-    private int numberOfTurns;
+    @Builder.Default
+    private int numberOfTurns = 3;
 
     @Column(name = "numberOfCheats", nullable = false)
-    private int numberOfCheats;
+    @Builder.Default
+    private int numberOfCheats = 0;
+
+    public String title() {
+        return String.format("%d элементов / %d ходов / %d выручаек", numberOfItems, numberOfTurns, numberOfCheats);
+    }
 }
