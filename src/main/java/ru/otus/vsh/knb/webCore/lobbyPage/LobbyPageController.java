@@ -17,6 +17,7 @@ import ru.otus.vsh.knb.webCore.Routes;
 public class LobbyPageController {
 
     private static final String TEMPLATE_PLAYER_NAME = "playerName";
+    private static final String TEMPLATE_LOGOUT = "logout";
     private static final String TEMPLATE_SESSION_ID = "sessionId";
     private static final String LOBBY_HTML = "lobby.html";
 
@@ -24,6 +25,7 @@ public class LobbyPageController {
     public String getGamePage(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         model.addAttribute(TEMPLATE_PLAYER_NAME, ((Person) authentication.getPrincipal()).getName());
+        model.addAttribute(TEMPLATE_LOGOUT, Routes.API_LOGOUT);
         model.addAttribute(TEMPLATE_SESSION_ID, new Id().getInnerId());
 
         return LOBBY_HTML;

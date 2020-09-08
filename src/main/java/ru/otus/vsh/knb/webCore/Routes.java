@@ -9,8 +9,10 @@ public final class Routes {
     public static final String GAME = "/game";
 
     public static final String API = "/api";
-    public static final String API_LOGIN = API + "/login";
-    public static final String API_GAME_WS = API + "/game-ws";
+    public static final String API_LOGIN = "/api/login";
+    public static final String API_LOGOUT = "/api/logout";
+
+    public static final String API_GAME_WS = "/api/game-ws";
     public static final String API_GAME_START = "/game-start";
     public static final String API_ANSWER = "/answer";
 
