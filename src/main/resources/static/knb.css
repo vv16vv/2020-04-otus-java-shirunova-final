@@ -27,26 +27,12 @@ body {
     color: firebrick;
 }
 
-a:link {
+a:link, a:visited, a:active {
     color: azure;
-    background-color: transparent;
-    text-decoration: none;
-}
-
-a:visited {
-    color: azure;
-    background-color: transparent;
     text-decoration: none;
 }
 
 a:hover {
-    color: #FFFFFF;
-    background-color: transparent;
-    text-decoration: underline;
-}
-
-a:active {
-    color: azure;
-    background-color: transparent;
+    color: #eddc33;
     text-decoration: underline;
 }
