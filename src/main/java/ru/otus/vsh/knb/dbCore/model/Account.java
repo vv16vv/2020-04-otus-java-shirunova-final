@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.vsh.knb.domain.DefaultValues;
 
 import javax.persistence.*;
 
@@ -21,7 +22,8 @@ public class Account implements Model {
     private long id = 0L;
 
     @Column(name = "sum", nullable = false)
-    private long sum;
+    @Builder.Default
+    private long sum = DefaultValues.INITIAL_SUM;
 
     public long increase(long inc) {
         sum += inc;

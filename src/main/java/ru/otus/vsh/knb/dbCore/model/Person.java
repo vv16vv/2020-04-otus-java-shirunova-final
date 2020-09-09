@@ -73,4 +73,8 @@ public class Person implements Model, UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean canAfford(long wager) {
+        return getAccount().getSum() >= wager;
+    }
 }

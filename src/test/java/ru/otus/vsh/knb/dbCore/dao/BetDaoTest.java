@@ -90,6 +90,55 @@ public class BetDaoTest extends BaseDaoTest {
     }
 
     @Test
+    void searchExistingBetByPigs() {
+        val game = getNewGame();
+        val person1InGame = getNewPerson1InGame(game);
+        val person2InGame = getNewPerson2InGame(game);
+        val person3InGame = getNewObserverInGame(game);
+        val bet1 = getNewBet(person1InGame, person2InGame);
+        val bet2 = getNewBet(person2InGame, person3InGame);
+
+        sessionManagerHibernate.beginSession();
+        gameDaoHibernate.insert(game);
+        personsInGamesDaoHibernate.insert(person1InGame);
+        personsInGamesDaoHibernate.insert(person2InGame);
+        personsInGamesDaoHibernate.insert(person3InGame);
+        betDaoHibernate.insert(bet1);
+        betDaoHibernate.insert(bet2);
+        sessionManagerHibernate.commitSession();
+
+        sessionManagerHibernate.beginSession();
+        val commonBets1 = betDaoHibernate.findCommonBet(person1InGame, person2InGame);
+        val commonBets2 = betDaoHibernate.findCommonBet(person2InGame, person1InGame);
+        val commonBets3 = betDaoHibernate.findCommonBet(person3InGame, person2InGame);
+        val commonBets4 = betDaoHibernate.findCommonBet(person3InGame, person1InGame);
+        sessionManagerHibernate.commitSession();
+        log.info("Found bets made by persons {} and {} is {}",
+                person1InGame.getPerson().getLogin(),
+                person2InGame.getPerson().getLogin(),
+                commonBets1);
+        log.info("Found bets made by persons {} and {} is {}",
+                person2InGame.getPerson().getLogin(),
+                person1InGame.getPerson().getLogin(),
+                commonBets2);
+        log.info("Found bets made by persons {} and {} is {}",
+                person3InGame.getPerson().getLogin(),
+                person2InGame.getPerson().getLogin(),
+                commonBets3);
+        log.info("Found bets made by persons {} and {} is {}",
+                person3InGame.getPerson().getLogin(),
+                person1InGame.getPerson().getLogin(),
+                commonBets4);
+
+        assertThat(commonBets1).isNotEmpty();
+        assertThat(commonBets2).isNotEmpty();
+        assertThat(commonBets3).isNotEmpty();
+        assertThat(commonBets4).isEmpty();
+        assertThat(commonBets1).isEqualTo(commonBets2);
+        assertThat(commonBets1).isNotEqualTo(commonBets3);
+    }
+
+    @Test
     void updateBet() {
         val game = getNewGame();
         val person1InGame = getNewPerson1InGame(game);

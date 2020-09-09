@@ -5,7 +5,10 @@ import lombok.val;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import ru.otus.vsh.knb.dbCore.dbService.*;
 import ru.otus.vsh.knb.dbCore.model.*;
+import ru.otus.vsh.knb.domain.GameProcessor;
+import ru.otus.vsh.knb.domain.GameProcessorImpl;
 import ru.otus.vsh.knb.hibernate.HibernateUtils;
 import ru.otus.vsh.knb.hibernate.dao.*;
 import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
@@ -33,6 +36,13 @@ public class BaseDaoTest {
     protected PersonDaoHibernate personDaoHibernate;
     protected PersonsInGamesDaoHibernate personsInGamesDaoHibernate;
 
+    protected DBServicePerson dbServicePerson;
+    protected DBServiceGame dbServiceGame;
+    protected DBServicePersonsInGames dbServicePersonsInGames;
+    protected DBServiceBet dbServiceBet;
+
+    protected GameProcessor gameProcessor;
+
     @BeforeEach
     public void setUp() {
         sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML_FILE_RESOURCE,
@@ -49,6 +59,13 @@ public class BaseDaoTest {
         gameSettingsDaoHibernate = new GameSettingsDaoHibernate(sessionManagerHibernate);
         personDaoHibernate = new PersonDaoHibernate(sessionManagerHibernate);
         accountDaoHibernate = new AccountDaoHibernate(sessionManagerHibernate);
+
+        dbServicePerson = new DbServicePersonImpl(personDaoHibernate);
+        dbServiceGame = new DbServiceGameImpl(gameDaoHibernate);
+        dbServicePersonsInGames = new DbServicePersonsInGamesImpl(personsInGamesDaoHibernate);
+        dbServiceBet = new DbServiceBetImpl(betDaoHibernate);
+
+        gameProcessor = new GameProcessorImpl(dbServicePerson, dbServiceGame, dbServicePersonsInGames, dbServiceBet);
     }
 
     @AfterEach
@@ -58,24 +75,19 @@ public class BaseDaoTest {
 
     protected Game getNewGame() {
         return Game.builder()
-                .id(0L)
                 .settings(getNewGameSettings())
-                .isCompleted(false)
-                .actualResult(EventResults.Unknown.id())
                 .get();
     }
 
 
     protected Account getNewAccount() {
         return Account.builder()
-                .id(0L)
                 .sum(500L)
                 .get();
     }
 
     protected GameSettings getNewGameSettings() {
         return GameSettings.builder()
-                .id(0L)
                 .numberOfCheats(initialCheats)
                 .numberOfItems(initialItems)
                 .numberOfTurns(initialTurns)
@@ -84,7 +96,6 @@ public class BaseDaoTest {
 
     protected Person getNewPerson1() {
         return Person.builder()
-                .id(0L)
                 .login("vitkus")
                 .name("Viktoria")
                 .password("12345")
@@ -94,7 +105,6 @@ public class BaseDaoTest {
 
     protected Person getNewPerson2() {
         return Person.builder()
-                .id(0L)
                 .login("koshir")
                 .name("Konstantin")
                 .password("24680")
@@ -104,7 +114,6 @@ public class BaseDaoTest {
 
     protected Person getNewPerson3() {
         return Person.builder()
-                .id(0L)
                 .login("sevantius")
                 .name("Vsevolod")
                 .password("11111")
@@ -112,7 +121,7 @@ public class BaseDaoTest {
                 .get();
     }
 
-    protected PersonsInGames getNewPerson1InGame(Game game){
+    protected PersonsInGames getNewPerson1InGame(Game game) {
         return PersonsInGames.builder()
                 .game(game)
                 .person(getNewPerson1())
@@ -120,7 +129,7 @@ public class BaseDaoTest {
                 .get();
     }
 
-    protected PersonsInGames getNewPerson2InGame(Game game){
+    protected PersonsInGames getNewPerson2InGame(Game game) {
         return PersonsInGames.builder()
                 .game(game)
                 .person(getNewPerson2())
@@ -128,7 +137,7 @@ public class BaseDaoTest {
                 .get();
     }
 
-    protected PersonsInGames getNewObserverInGame(Game game){
+    protected PersonsInGames getNewObserverInGame(Game game) {
         return PersonsInGames.builder()
                 .game(game)
                 .person(getNewPerson3())
@@ -136,7 +145,7 @@ public class BaseDaoTest {
                 .get();
     }
 
-    protected List<PersonsInGames> getNewPersonsInNewGame(){
+    protected List<PersonsInGames> getNewPersonsInNewGame() {
         val list = new ArrayList<PersonsInGames>(3);
         val game = getNewGame();
         list.add(getNewPerson1InGame(game));
@@ -145,14 +154,12 @@ public class BaseDaoTest {
         return list;
     }
 
-    protected Bet getNewBet(PersonsInGames person1, PersonsInGames person2){
+    protected Bet getNewBet(PersonsInGames person1, PersonsInGames person2) {
         return Bet.builder()
                 .person1(person1)
                 .person2(person2)
                 .expectedResult(EventResults.Player1Won.id())
                 .wager(100L)
-                .id(0L)
-                .isClosed(false)
                 .get();
 
     }

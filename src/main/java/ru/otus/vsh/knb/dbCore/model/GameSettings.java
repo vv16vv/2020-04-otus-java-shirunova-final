@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.vsh.knb.domain.DefaultValues;
 
 import javax.persistence.*;
 
@@ -32,15 +33,15 @@ public class GameSettings implements Model {
 
     @Column(name = "numberOfItems", nullable = false)
     @Builder.Default
-    private int numberOfItems = 3;
+    private int numberOfItems = DefaultValues.SIMPLE_SETTINGS_ITEMS;
 
     @Column(name = "numberOfTurns", nullable = false)
     @Builder.Default
-    private int numberOfTurns = 3;
+    private int numberOfTurns = DefaultValues.SIMPLE_SETTINGS_TURNS;
 
     @Column(name = "numberOfCheats", nullable = false)
     @Builder.Default
-    private int numberOfCheats = 0;
+    private int numberOfCheats = DefaultValues.SIMPLE_SETTINGS_CHEATS;
 
     public String title() {
         return String.format("%d элементов / %d ходов / %d выручаек", numberOfItems, numberOfTurns, numberOfCheats);
