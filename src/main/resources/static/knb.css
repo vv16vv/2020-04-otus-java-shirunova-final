@@ -36,3 +36,17 @@ a:hover {
     color: #eddc33;
     text-decoration: underline;
 }
+
+.availableToPlay {
+    color: aquamarine;
+    font-weight: bold;
+}
+
+.availableToObserve {
+    color: lightskyblue;
+    font-weight: bold;
+}
+
+.notAvailable {
+    color: mistyrose;
+}

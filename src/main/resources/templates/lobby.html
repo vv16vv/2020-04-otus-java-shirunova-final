@@ -1,15 +1,39 @@
-<html xmlns="http://www.w3.org/1999/xhtml" content="text/html;">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" content="text/html;">
 <head>
     <title>Administration</title>
     <meta charset="utf-8">
-    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/knb.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="/knb.css" />
 </head>
 <body>
-<div class="top">
-    <h2>[[${playerName}]], добро пожаловать!</h2>
-
-    <a th:href="@{${logout}}">Выйти</a>
+<div class="row">
+    <div class="col">
+        <h2>[[${playerName}]], добро пожаловать!</h2>
+    </div>
+    <div class="col text-right">
+        <a th:href="@{${logout}}">Выйти</a>
+    </div>
+</div>
+<div>На счету [[${playerSum}]] <i class="far fa-money-bill-alt"></i></div>
+<div>Список доступных игр</div>
+<div id="availableGames" class="row">
+    <div id="avail-games-div" class="col">
+        <table>
+            <tbody>
+            <tr th:each="game : ${availGames}" class="borderedTable">
+                <td class="layoutTable" th:text="${game.title}" th:class="${game.style}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="avail-games-buttons" class="col">
+        <table>
+            <tr><input id="newGameBtn" type="button" th:onclick="@{{newGame}}" value="Новая игра"/></tr>
+            <tr><input id="joinGameBtn" type="button" th:onclick="@{{joinGame}}" value="Присоединиться"/></tr>
+        </table>
+    </div>
 </div>
 </body>
 </html>

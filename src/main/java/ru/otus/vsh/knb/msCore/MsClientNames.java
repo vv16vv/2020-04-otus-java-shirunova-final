@@ -9,8 +9,8 @@ import lombok.experimental.Accessors;
 public enum MsClientNames {
     DATA_BASE("DataBaseMSClient"),
     GAME_KEEPER("GameKeeperMSClient"),
-    AUTH_SERVICE("AuthServiceMSClient"),
     GAME_CONTROLLER("GameControllerMSClient"),
+    LOBBY_CONTROLLER("LobbyControllerMSClient"),
     LOGIN_CONTROLLER("LoginControllerMSClient"),
     NEW_PLAYER_CONTROLLER("NewPlayerControllerMSClient"),
     PLAYERS_CONTROLLER("PlayersControllerMSClient"),
