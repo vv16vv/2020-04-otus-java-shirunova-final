@@ -1,13 +1,13 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" content="text/html;">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="ru" content="text/html;">
 <head>
     <title>Administration</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <link rel="stylesheet" href="/knb.css" />
+    <link rel="stylesheet" href="/knb.css"/>
 </head>
-<body>
+<body class="container">
 <div class="row">
     <div class="col">
         <h2>[[${playerName}]], добро пожаловать!</h2>
@@ -17,23 +17,38 @@
     </div>
 </div>
 <div>На счету [[${playerSum}]] <i class="far fa-money-bill-alt"></i></div>
-<div>Список доступных игр</div>
-<div id="availableGames" class="row">
-    <div id="avail-games-div" class="col">
-        <table>
-            <tbody>
-            <tr th:each="game : ${availGames}" class="borderedTable">
-                <td class="layoutTable" th:text="${game.title}" th:class="${game.style}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div id="avail-games-buttons" class="col">
-        <table>
-            <tr><input id="newGameBtn" type="button" th:onclick="@{{newGame}}" value="Новая игра"/></tr>
-            <tr><input id="joinGameBtn" type="button" th:onclick="@{{joinGame}}" value="Присоединиться"/></tr>
-        </table>
-    </div>
+<div class="container">Можно начать новую игру
+    <input id="newGameBtn"
+           type="button"
+           th:onclick="@{{newGame}}"
+           class="btn btn-primary"
+           value="Новая игра"/></div>
+<div class="container">Или присоединиться к существующей:
+    <form>
+        <div id="avail-games-div" class="col-8">
+            <table class="layoutTable" style="width: 100%;">
+                <tbody>
+                <tr th:each="game : ${availGames}" th:class="${game.style} + ' layoutTable'">
+                    <td>[[${game.title}]]</td>
+                    <td>[[${game.bet}]] <i class="far fa-money-bill-alt"></i></td>
+                    <td><input type="submit"
+                               th:id="'play' + ${game.id}"
+                               th:value="Играть"
+                               th:onclick="@{{joinGame}}"
+                               class="btn btn-success"
+                               th:disabled="${game.style != 'availableToPlay'}"></td>
+                    <td><input type="submit"
+                               th:id="'observe' + ${game.id}"
+                               th:value="Наблюдать"
+                               th:onclick="@{{joinGame}}"
+                               class="btn btn-info"
+                               th:disabled="${game.style == 'availableToPlay'}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
 </div>
 </body>
 </html>

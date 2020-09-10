@@ -44,6 +44,6 @@ public class GameSettings implements Model {
     private int numberOfCheats = DefaultValues.SIMPLE_SETTINGS_CHEATS;
 
     public String title() {
-        return String.format("%d элементов / %d ходов / %d выручаек", numberOfItems, numberOfTurns, numberOfCheats);
+        return String.format("%d эл. / %d х. / %d в.", numberOfItems, numberOfTurns, numberOfCheats);
     }
 }

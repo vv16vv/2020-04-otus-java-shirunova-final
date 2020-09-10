@@ -49,7 +49,11 @@ public class LobbyPageController {
                             .getGames()
                             .stream()
                             .sorted()
-                            .map(gameData -> new UIGameData(gameData.title(), gameData.style(loggedInPerson).title()))
+                            .map(gameData -> new UIGameData(
+                                    String.valueOf(gameData.getGame().getId()),
+                                    gameData.title(),
+                                    String.valueOf(gameData.getWager()),
+                                    gameData.style(loggedInPerson).title()))
                             .collect(Collectors.toList());
                     model.addAttribute(TEMPLATE_PLAYER_NAME, loggedInPerson.getName());
                     model.addAttribute(TEMPLATE_PLAYER_SUM, loggedInPerson.getAccount().getSum());

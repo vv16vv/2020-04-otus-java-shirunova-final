@@ -42,11 +42,27 @@ a:hover {
     font-weight: bold;
 }
 
+.availableToPlay:hover {
+    color: darkblue;
+    background-color: aquamarine;
+    font-weight: bold;
+}
+
 .availableToObserve {
     color: lightskyblue;
     font-weight: bold;
 }
 
+.availableToObserve:hover {
+    color: darkblue;
+    background-color: lightskyblue;
+    font-weight: bold;
+}
+
 .notAvailable {
     color: mistyrose;
+}
+.notAvailable:hover {
+    color: darkblue;
+    background-color: mistyrose;
 }

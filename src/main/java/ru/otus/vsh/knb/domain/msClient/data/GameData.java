@@ -21,7 +21,7 @@ public class GameData implements Comparable<GameData> {
     long wager = 0L;
 
     public String title() {
-        return String.format("%s (%s / ставка %d )", player1.getLogin(), game.getSettings().title(), wager);
+        return String.format("%s %s", player1.getLogin(), game.getSettings().title());
     }
 
     public AvailGameStyles style(@Nonnull Person person) {
