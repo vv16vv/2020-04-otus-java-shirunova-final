@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.dbCore.msClient.data;
+package ru.otus.vsh.knb.domain.msClient.data;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

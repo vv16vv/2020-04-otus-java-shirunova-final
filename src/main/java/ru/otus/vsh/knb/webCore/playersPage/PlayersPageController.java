@@ -5,7 +5,7 @@ import lombok.val;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ru.otus.vsh.knb.dbCore.msClient.data.PlayersReplyData;
+import ru.otus.vsh.knb.domain.msClient.data.PlayersReplyData;
 import ru.otus.vsh.knb.msCore.MessageSystemHelper;
 import ru.otus.vsh.knb.msCore.common.EmptyMessageData;
 import ru.otus.vsh.knb.msCore.message.MessageType;

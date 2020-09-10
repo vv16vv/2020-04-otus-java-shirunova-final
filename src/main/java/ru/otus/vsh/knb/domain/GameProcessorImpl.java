@@ -8,7 +8,7 @@ import ru.otus.vsh.knb.dbCore.dbService.DBServiceGame;
 import ru.otus.vsh.knb.dbCore.dbService.DBServicePerson;
 import ru.otus.vsh.knb.dbCore.dbService.DBServicePersonsInGames;
 import ru.otus.vsh.knb.dbCore.model.*;
-import ru.otus.vsh.knb.dbCore.msClient.data.GameData;
+import ru.otus.vsh.knb.domain.msClient.data.GameData;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -117,9 +117,7 @@ public class GameProcessorImpl implements GameProcessor {
             long bet = 0L;
             if (player2.isEmpty()) {
                 val bets = dbServiceBet.findByPersonInGame(player1);
-                if (bets.isEmpty()) {
-                    bet = 0;
-                } else {
+                if (!bets.isEmpty()) {
                     bet = dbServiceBet.findByPersonInGame(player1).get(0).getWager();
                 }
             } else {

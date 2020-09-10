@@ -1,7 +1,7 @@
 package ru.otus.vsh.knb.domain;
 
 import ru.otus.vsh.knb.dbCore.model.*;
-import ru.otus.vsh.knb.dbCore.msClient.data.GameData;
+import ru.otus.vsh.knb.domain.msClient.data.GameData;
 
 import javax.annotation.Nonnull;
 import java.util.List;

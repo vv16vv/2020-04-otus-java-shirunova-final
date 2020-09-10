@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.dbCore.msClient;
+package ru.otus.vsh.knb.domain.msClient;
 
 import ru.otus.vsh.knb.msCore.services.HandlersStore;
 import ru.otus.vsh.knb.msCore.MessageSystem;
