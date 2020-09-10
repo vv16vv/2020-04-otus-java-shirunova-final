@@ -32,8 +32,8 @@ public class GameData implements Comparable<GameData> {
 
     @Override
     public int compareTo(@Nonnull GameData o) {
-        if ((player2 != null) && (o.player2 == null)) return -1;
-        if ((player2 == null) && (o.player2 != null)) return 1;
+        if ((player2 != null) && (o.player2 == null)) return 1;
+        if ((player2 == null) && (o.player2 != null)) return -1;
         return Objects.compare(wager, o.wager, Comparator.comparingLong(value -> value));
     }
 }
