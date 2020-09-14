@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Slf4j
-public class CallbackReceiveRequestHandler<T extends MessageData, R extends MessageData> implements RequestHandler<T, R>{
+public class CallbackCallRequestHandler<T extends MessageData, R extends MessageData> implements RequestHandler<T, R>{
     private final CallbackRegistry callbackRegistry;
 
     @Override

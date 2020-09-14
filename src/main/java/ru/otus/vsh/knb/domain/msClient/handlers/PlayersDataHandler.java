@@ -5,7 +5,7 @@ import lombok.val;
 import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.domain.msClient.data.PlayersReplyData;
 import ru.otus.vsh.knb.msCore.common.EmptyMessageData;
-import ru.otus.vsh.knb.msCore.common.SimpleReceiveRequestHandler;
+import ru.otus.vsh.knb.msCore.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.knb.msCore.message.Message;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * при обработке сообщения PLAYERS
  */
 @AllArgsConstructor
-public class PlayersDataHandler implements SimpleReceiveRequestHandler<EmptyMessageData, PlayersReplyData> {
+public class PlayersDataHandler implements ResponseProduceRequestHandler<EmptyMessageData, PlayersReplyData> {
     private final GameProcessor gameProcessor;
 
     @Override
