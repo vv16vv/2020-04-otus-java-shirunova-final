@@ -2,9 +2,9 @@ package ru.otus.vsh.knb.domain.msClient.handlers;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.domain.msClient.data.GetPlayerByLoginData;
 import ru.otus.vsh.knb.domain.msClient.data.GetPlayerByLoginReplyData;
-import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.msCore.common.SimpleReceiveRequestHandler;
 import ru.otus.vsh.knb.msCore.message.Message;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
  * при обработке сообщения GET_PLAYER_BY_LOGIN
  */
 @AllArgsConstructor
-public class GetPlayerByLoginDataHandler extends SimpleReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData> {
+public class GetPlayerByLoginDataHandler implements SimpleReceiveRequestHandler<GetPlayerByLoginData, GetPlayerByLoginReplyData> {
     private final GameProcessor gameProcessor;
 
     @Override

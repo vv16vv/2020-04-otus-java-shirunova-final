@@ -2,9 +2,9 @@ package ru.otus.vsh.knb.domain.msClient.handlers;
 
 import lombok.AllArgsConstructor;
 import lombok.val;
+import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonData;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonReplayData;
-import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.msCore.common.SimpleReceiveRequestHandler;
 import ru.otus.vsh.knb.msCore.message.Message;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
  * при обработке сообщения AVAIL_GAMES
  */
 @AllArgsConstructor
-public class AvailableGamesForPersonDataHandler extends SimpleReceiveRequestHandler<AvailableGamesForPersonData, AvailableGamesForPersonReplayData> {
+public class AvailableGamesForPersonDataHandler implements SimpleReceiveRequestHandler<AvailableGamesForPersonData, AvailableGamesForPersonReplayData> {
     private final GameProcessor gameProcessor;
 
     @Override

@@ -1,4 +1,4 @@
 package ru.otus.vsh.knb.msCore.common;
 
-abstract public class SimpleReceiveRequestHandler<T extends MessageData, R extends MessageData> implements RequestHandler<T, R>{
+public interface SimpleReceiveRequestHandler<T extends MessageData, R extends MessageData> extends RequestHandler<T, R>{
 }
