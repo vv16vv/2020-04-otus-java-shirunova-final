@@ -3,10 +3,7 @@ package ru.otus.vsh.knb.domain;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Component;
-import ru.otus.vsh.knb.dbCore.dbService.DBServiceBet;
-import ru.otus.vsh.knb.dbCore.dbService.DBServiceGame;
-import ru.otus.vsh.knb.dbCore.dbService.DBServicePerson;
-import ru.otus.vsh.knb.dbCore.dbService.DBServicePersonsInGames;
+import ru.otus.vsh.knb.dbCore.dbService.*;
 import ru.otus.vsh.knb.dbCore.model.*;
 import ru.otus.vsh.knb.domain.msClient.data.GameData;
 
@@ -22,6 +19,7 @@ public class GameProcessorImpl implements GameProcessor {
     private final DBServiceGame dbServiceGame;
     private final DBServicePersonsInGames dbServicePersonsInGames;
     private final DBServiceBet dbServiceBet;
+    private final DBServiceGameSettings dbServiceGameSettings;
 
 
     @Override
@@ -51,6 +49,11 @@ public class GameProcessorImpl implements GameProcessor {
     @Override
     public List<Person> players() {
         return dbServicePerson.findAll();
+    }
+
+    @Override
+    public GameSettings getSettings(int items, int turns, int cheats) {
+        return dbServiceGameSettings.getOrCreateSettingsByParams(items, turns, cheats);
     }
 
     @Override

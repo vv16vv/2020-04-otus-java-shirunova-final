@@ -16,6 +16,8 @@ public interface GameProcessor {
 
     List<Person> players();
 
+    GameSettings getSettings(int items, int turns, int cheats);
+
     Optional<Game> startNewGame(@Nonnull Person person);
 
     Optional<Game> startNewGame(@Nonnull Person person, long wager);
