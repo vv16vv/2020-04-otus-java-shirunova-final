@@ -46,6 +46,8 @@ public class DataInitializerImpl implements DataInitializer {
         val player3 = gameProcessor.addNewPlayer("koshir", "Константин", passwordEncoder.encode("24680"));
         val player4 = gameProcessor.addNewPlayer("lanaelle", "Елена", passwordEncoder.encode("99899"), 1000L);
         val player5 = gameProcessor.addNewPlayer("krosider", "Евгений", passwordEncoder.encode("75775"), 1000L);
+        val player6 = gameProcessor.addNewPlayer("barabashka", "Ольга", passwordEncoder.encode("1"));
+        val player7 = gameProcessor.addNewPlayer("retsam", "Петр", passwordEncoder.encode("1"));
 
         // default game, without second player, without bet
         // participants: player5 as a first player
