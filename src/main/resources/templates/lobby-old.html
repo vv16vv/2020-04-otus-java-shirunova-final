@@ -6,10 +6,6 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link rel="stylesheet" href="/knb.css"/>
-    <script src="/webjars/jquery/jquery.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/lobby.js"></script>
 </head>
 <body class="container">
 <div class="row">
@@ -21,8 +17,6 @@
     </div>
 </div>
 <div>На счету [[${playerSum}]] <i class="far fa-money-bill-alt"></i></div>
-<div id="sessionId" th:text="${sessionId}" hidden></div>
-<div id="playerLogin" th:text="${playerLogin}" hidden></div>
 <div class="container">Можно начать новую игру
     <input id="newGameBtn"
            type="button"
@@ -31,14 +25,30 @@
            value="Новая игра"/></div>
 <div class="container">Или присоединиться к существующей:
     <form>
-        <div class="col-8">
+        <div id="avail-games-div" class="col-8">
             <table class="layoutTable" style="width: 100%;">
-                <tbody id="avail-games-div">
+                <tbody>
+                <tr th:each="game : ${availGames}" th:class="${game.style} + ' layoutTable'">
+                    <td>[[${game.title}]]</td>
+                    <td>[[${game.bet}]] <i class="far fa-money-bill-alt"></i></td>
+                    <td><input type="submit"
+                               th:id="'play' + ${game.id}"
+                               th:value="Играть"
+                               th:onclick="@{{joinGame}}"
+                               class="btn btn-success"
+                               th:disabled="${game.style != 'availableToPlay'}"></td>
+                    <td><input type="submit"
+                               th:id="'observe' + ${game.id}"
+                               th:value="Наблюдать"
+                               th:onclick="@{{joinGame}}"
+                               class="btn btn-info"
+                               th:disabled="${game.style == 'availableToPlay'}">
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </form>
 </div>
-
 </body>
 </html>

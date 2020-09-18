@@ -12,11 +12,14 @@ public final class Routes {
     public static final String API_LOGIN = "/api/login";
     public static final String API_LOGOUT = "/api/logout";
 
+    public static final String API_LOBBY_HELLO = "/lobby-hello.{sessionId}";
+
     public static final String API_GAME_WS = "/api/game-ws";
     public static final String API_GAME_START = "/game-start";
     public static final String API_ANSWER = "/answer";
 
-    public static final String API_TOPIC = "/topic";
+    public static final String TOPIC = "/topic";
+    public static final String TOPIC_GAMES = "/topic/games";
 
     public static final String ERROR = "/error";
 }

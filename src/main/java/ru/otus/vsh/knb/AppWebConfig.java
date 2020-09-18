@@ -1,27 +1,27 @@
 package ru.otus.vsh.knb;
 
-import org.hibernate.SessionFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import ru.otus.vsh.knb.dbCore.model.*;
-import ru.otus.vsh.knb.hibernate.HibernateUtils;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import ru.otus.vsh.knb.webCore.Routes;
 
 @Configuration
+@EnableWebSocketMessageBroker
 @ComponentScan
-public class AppWebConfig {
+public class AppWebConfig implements WebSocketMessageBrokerConfigurer {
 
-    private static final String HIBERNATE_CFG_XML = "hibernate.cfg.xml";
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker(Routes.TOPIC);
+        config.setApplicationDestinationPrefixes(Routes.API);
+    }
 
-    @Bean
-    public SessionFactory sessionFactory() {
-        return HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML,
-                Bet.class,
-                PersonsInGames.class,
-                Game.class,
-                GameSettings.class,
-                Person.class,
-                Account.class);
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint(Routes.API_GAME_WS).withSockJS();
     }
 
 }
