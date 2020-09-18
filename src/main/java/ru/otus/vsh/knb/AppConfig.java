@@ -6,10 +6,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.vsh.knb.dbCore.model.*;
 import ru.otus.vsh.knb.hibernate.HibernateUtils;
+import ru.otus.vsh.knb.webCore.SessionKeeper;
+import ru.otus.vsh.knb.webCore.SessionKeeperImpl;
 
 @Configuration
 @ComponentScan
-public class AppSessionFactoryInit {
+public class AppConfig {
 
     private static final String HIBERNATE_CFG_XML = "hibernate.cfg.xml";
 
@@ -24,4 +26,9 @@ public class AppSessionFactoryInit {
                 Account.class);
     }
 
+
+    @Bean
+    public SessionKeeper sessionKeeper() {
+        return new SessionKeeperImpl();
+    }
 }

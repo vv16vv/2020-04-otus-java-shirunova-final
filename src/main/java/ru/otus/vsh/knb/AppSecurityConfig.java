@@ -12,12 +12,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.otus.vsh.knb.dbCore.dbService.DBServicePerson;
 import ru.otus.vsh.knb.webCore.Routes;
+import ru.otus.vsh.knb.webCore.SessionKeeper;
 
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     private final DBServicePerson dbServicePerson;
+    private final SessionKeeper sessionKeeper;
 
     @Autowired
     protected void configureGlobal(final AuthenticationManagerBuilder auth) throws Exception {
@@ -44,6 +46,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .logout()
                     .logoutUrl(Routes.API_LOGOUT)
+                    .addLogoutHandler((request, response, authentication) -> sessionKeeper.remove(request.getRequestedSessionId()))
                     .deleteCookies("JSESSIONID")
                     .logoutSuccessUrl(Routes.ROOT)
         ;

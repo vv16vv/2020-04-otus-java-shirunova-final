@@ -21,8 +21,7 @@ public class AvailableGamesForPersonDataHandler implements ResponseProduceReques
 
     @Override
     public Optional<Message<AvailableGamesForPersonReplayData>> handle(Message<AvailableGamesForPersonData> msg) {
-        val person = gameProcessor.playerByLogin(msg.getBody().getPersonLogin()).orElseThrow();
-        val games = new ArrayList<>(gameProcessor.gamesToJoinAsObserver(person));
-        return Optional.of(Message.buildReplyMessage(msg, new AvailableGamesForPersonReplayData(person, games)));
+        val games = new ArrayList<>(gameProcessor.gamesToJoinAsObserver(msg.getBody().getPerson()));
+        return Optional.of(Message.buildReplyMessage(msg, new AvailableGamesForPersonReplayData(games)));
     }
 }

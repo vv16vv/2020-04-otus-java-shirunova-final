@@ -41,9 +41,7 @@ const start = () => {
             // stompClient.subscribe(`${topicResult}.${sessionId}`, (result) => showResult(JSON.parse(result.body)));
             // stompClient.subscribe(`${topicCorrect}.${sessionId}`, (result) => showCorrect(JSON.parse(result.body)));
 
-            stompClient.send(`${topicLobbyHello}.${sessionId}`, {}, JSON.stringify({
-                'playerLogin': playerLogin
-            }))
+            stompClient.send(`${topicLobbyHello}.${sessionId}`, {}, {})
         });
     } else {
         console.log("Stomp client already exists")

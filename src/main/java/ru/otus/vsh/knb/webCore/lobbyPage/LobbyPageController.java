@@ -10,17 +10,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import ru.otus.vsh.knb.dbCore.model.Person;
+import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonData;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonReplayData;
 import ru.otus.vsh.knb.msCore.MsClientNames;
 import ru.otus.vsh.knb.msCore.message.MessageType;
 import ru.otus.vsh.knb.webCore.Routes;
+import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameData;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Controller
@@ -39,12 +39,14 @@ public class LobbyPageController {
     private static final String LOBBY_HTML = "lobby.html";
 
     private final SimpMessagingTemplate template;
+    private final SessionKeeper sessionKeeper;
     private final LobbyControllerMSClient lobbyControllerMSClient;
 
     @GetMapping(Routes.LOBBY)
     public String getGamePage(Model model) {
         Person loggedInPerson = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         val sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        sessionKeeper.add(sessionId, loggedInPerson);
 
         model.addAttribute(TEMPLATE_PLAYER_NAME, loggedInPerson.getName());
         model.addAttribute(TEMPLATE_PLAYER_SUM, loggedInPerson.getAccount().getSum());
@@ -55,10 +57,11 @@ public class LobbyPageController {
     }
 
     @MessageMapping(Routes.API_LOBBY_HELLO)
-    public void startGame(@DestinationVariable String sessionId, AvailableGamesForPersonData personData) {
+    public void startGame(@DestinationVariable String sessionId) {
+        val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
-                personData, MessageType.AVAIL_GAMES,
+                new AvailableGamesForPersonData(loggedInPerson), MessageType.AVAIL_GAMES,
                 replay -> {
                     val data = ((AvailableGamesForPersonReplayData) replay);
                     val games = data
@@ -69,7 +72,7 @@ public class LobbyPageController {
                                     String.valueOf(gameData.getGame().getId()),
                                     gameData.title(),
                                     String.valueOf(gameData.getWager()),
-                                    gameData.style(data.getCurrentPerson()).title()))
+                                    gameData.style(loggedInPerson).title()))
                             .collect(Collectors.toList());
                     template.convertAndSend(Routes.TOPIC_GAMES + "." + sessionId, games);
                 }
