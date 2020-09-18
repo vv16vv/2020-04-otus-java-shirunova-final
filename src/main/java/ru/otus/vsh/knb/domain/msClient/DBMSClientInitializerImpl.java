@@ -3,11 +3,8 @@ package ru.otus.vsh.knb.domain.msClient;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import ru.otus.vsh.knb.domain.msClient.handlers.AvailableGamesForPersonDataHandler;
-import ru.otus.vsh.knb.domain.msClient.handlers.GetPlayerByLoginDataHandler;
-import ru.otus.vsh.knb.domain.msClient.handlers.NewPlayerDataHandler;
-import ru.otus.vsh.knb.domain.msClient.handlers.PlayersDataHandler;
 import ru.otus.vsh.knb.domain.GameProcessor;
+import ru.otus.vsh.knb.domain.msClient.handlers.*;
 import ru.otus.vsh.knb.msCore.MessageSystem;
 import ru.otus.vsh.knb.msCore.client.CallbackRegistry;
 import ru.otus.vsh.knb.msCore.message.MessageType;
@@ -26,6 +23,7 @@ public class DBMSClientInitializerImpl implements DBMSClientInitializer {
         store.addHandler(MessageType.NEW_PLAYER, new NewPlayerDataHandler(gameProcessor));
         store.addHandler(MessageType.PLAYERS, new PlayersDataHandler(gameProcessor));
         store.addHandler(MessageType.AVAIL_GAMES, new AvailableGamesForPersonDataHandler(gameProcessor));
+        store.addHandler(MessageType.NEW_GAME, new NewGameDataHandler(gameProcessor));
         val databaseMsClient = new DataBaseMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(databaseMsClient);
 

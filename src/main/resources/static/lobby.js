@@ -41,6 +41,7 @@ const start = () => {
             // stompClient.subscribe(`${topicResult}.${sessionId}`, (result) => showResult(JSON.parse(result.body)));
             // stompClient.subscribe(`${topicCorrect}.${sessionId}`, (result) => showCorrect(JSON.parse(result.body)));
 
+            $("#newGameBtn").click(() => stompClient.send(`${topicGameStart}.${sessionId}`, {}, {}))
             stompClient.send(`${topicLobbyHello}.${sessionId}`, {}, {})
         });
     } else {

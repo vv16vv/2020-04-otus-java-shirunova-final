@@ -11,16 +11,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.vsh.knb.dbCore.model.Person;
 import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonData;
 import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonReplayData;
+import ru.otus.vsh.knb.domain.msClient.data.NewGameData;
+import ru.otus.vsh.knb.domain.msClient.data.NewGameReplyData;
 import ru.otus.vsh.knb.msCore.MsClientNames;
 import ru.otus.vsh.knb.msCore.message.MessageType;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameData;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Controller
@@ -57,7 +61,7 @@ public class LobbyPageController {
     }
 
     @MessageMapping(Routes.API_LOBBY_HELLO)
-    public void startGame(@DestinationVariable String sessionId) {
+    public void loadData(@DestinationVariable String sessionId) {
         val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
@@ -79,5 +83,35 @@ public class LobbyPageController {
         );
         lobbyControllerMSClient.sendMessage(message);
     }
+
+    @MessageMapping(Routes.API_GAME_START)
+    public RedirectView startGame(@DestinationVariable String sessionId) {
+        val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
+        val message = lobbyControllerMSClient.produceMessage(
+                MsClientNames.DATA_BASE.name(),
+                NewGameData.builder().player1(loggedInPerson).get(), MessageType.NEW_GAME,
+                replay -> {
+                    val gameData = ((NewGameReplyData) replay).getGameData();
+                    val newGame = new UIGameData(
+                            String.valueOf(gameData.getGame().getId()),
+                            gameData.title(),
+                            String.valueOf(gameData.getWager()),
+                            gameData.style(loggedInPerson).title());
+                    template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + sessionId, "Кто еще захочет играть с тобой? Ждем...");
+                    sessionKeeper
+                            .sessions()
+                            .forEach(id -> {
+                                if (!sessionId.equals(id)) {
+                                    template.convertAndSend(Routes.TOPIC_GAMES + "." + id, Collections.singletonList(newGame));
+                                }
+                            });
+
+                }
+        );
+        lobbyControllerMSClient.sendMessage(message);
+
+        return new RedirectView(Routes.GAME, true);
+    }
+
 
 }

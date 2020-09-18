@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="ru" content="text/html;">
 <head>
-    <title>Administration</title>
+    <title>Лобби [[${playerName}]]</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
@@ -26,7 +26,6 @@
 <div class="container">Можно начать новую игру
     <input id="newGameBtn"
            type="button"
-           th:onclick="@{{newGame}}"
            class="btn btn-primary"
            value="Новая игра"/></div>
 <div class="container">Или присоединиться к существующей:

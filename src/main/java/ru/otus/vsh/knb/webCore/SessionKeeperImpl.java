@@ -6,6 +6,7 @@ import ru.otus.vsh.knb.dbCore.model.Person;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class SessionKeeperImpl implements SessionKeeper {
@@ -28,5 +29,10 @@ public class SessionKeeperImpl implements SessionKeeper {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Set<String> sessions() {
+        return repository.keySet();
     }
 }
