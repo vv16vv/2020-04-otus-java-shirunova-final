@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.hibernate.sessionmanager;
+package ru.otus.vsh.knb.dbCore.hibernate.sessionmanager;
 
 import lombok.Getter;
 import org.hibernate.Session;

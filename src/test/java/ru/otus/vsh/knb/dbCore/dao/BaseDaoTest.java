@@ -9,9 +9,9 @@ import ru.otus.vsh.knb.dbCore.dbService.*;
 import ru.otus.vsh.knb.dbCore.model.*;
 import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.domain.GameProcessorImpl;
-import ru.otus.vsh.knb.hibernate.HibernateUtils;
-import ru.otus.vsh.knb.hibernate.dao.*;
-import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.SessionFactoryUtils;
+import ru.otus.vsh.knb.dbCore.hibernate.dao.*;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.SessionManagerHibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class BaseDaoTest {
 
     @BeforeEach
     public void setUp() {
-        sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML_FILE_RESOURCE,
+        sessionFactory = SessionFactoryUtils.buildSessionFactory(HIBERNATE_CFG_XML_FILE_RESOURCE,
                 Bet.class,
                 PersonsInGames.class,
                 Game.class,

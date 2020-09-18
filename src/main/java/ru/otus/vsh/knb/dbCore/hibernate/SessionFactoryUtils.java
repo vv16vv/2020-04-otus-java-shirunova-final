@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.hibernate;
+package ru.otus.vsh.knb.dbCore.hibernate;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -9,9 +9,9 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.Arrays;
 
-public final class HibernateUtils {
+public final class SessionFactoryUtils {
 
-    private HibernateUtils() {
+    private SessionFactoryUtils() {
     }
 
     public static SessionFactory buildSessionFactory(String configResourceFileName,

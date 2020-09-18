@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.hibernate.dao;
+package ru.otus.vsh.knb.dbCore.hibernate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -8,7 +8,7 @@ import ru.otus.vsh.knb.dbCore.model.Game;
 import ru.otus.vsh.knb.dbCore.model.Person;
 import ru.otus.vsh.knb.dbCore.model.PersonsInGames;
 import ru.otus.vsh.knb.dbCore.model.Roles;
-import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.SessionManagerHibernate;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

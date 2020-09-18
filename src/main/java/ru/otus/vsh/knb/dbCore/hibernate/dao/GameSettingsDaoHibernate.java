@@ -1,11 +1,11 @@
-package ru.otus.vsh.knb.hibernate.dao;
+package ru.otus.vsh.knb.dbCore.hibernate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.knb.dbCore.dao.GameSettingsDao;
 import ru.otus.vsh.knb.dbCore.model.GameSettings;
-import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.SessionManagerHibernate;
 
 import java.util.Optional;
 

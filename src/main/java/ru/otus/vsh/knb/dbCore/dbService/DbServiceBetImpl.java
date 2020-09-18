@@ -8,8 +8,8 @@ import ru.otus.vsh.knb.dbCore.dbService.api.AbstractDbServiceImpl;
 import ru.otus.vsh.knb.dbCore.model.Bet;
 import ru.otus.vsh.knb.dbCore.model.EventResults;
 import ru.otus.vsh.knb.dbCore.model.PersonsInGames;
-import ru.otus.vsh.knb.hibernate.dao.PersonsInGamesDaoHibernate;
-import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.dao.PersonsInGamesDaoHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.SessionManagerHibernate;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

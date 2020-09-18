@@ -1,4 +1,4 @@
-package ru.otus.vsh.knb.hibernate.dao;
+package ru.otus.vsh.knb.dbCore.hibernate.dao;
 
 
 import com.google.common.collect.Lists;
@@ -6,13 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import ru.otus.vsh.knb.dbCore.dao.Dao;
 import ru.otus.vsh.knb.dbCore.dao.DaoException;
-import ru.otus.vsh.knb.dbCore.model.Account;
 import ru.otus.vsh.knb.dbCore.model.Model;
 import ru.otus.vsh.knb.dbCore.sessionmanager.SessionManager;
-import ru.otus.vsh.knb.hibernate.sessionmanager.DatabaseSessionHibernate;
-import ru.otus.vsh.knb.hibernate.sessionmanager.SessionManagerHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.DatabaseSessionHibernate;
+import ru.otus.vsh.knb.dbCore.hibernate.sessionmanager.SessionManagerHibernate;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 

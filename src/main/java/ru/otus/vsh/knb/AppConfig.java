@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.vsh.knb.dbCore.model.*;
-import ru.otus.vsh.knb.hibernate.HibernateUtils;
+import ru.otus.vsh.knb.dbCore.hibernate.SessionFactoryUtils;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.SessionKeeperImpl;
 
@@ -17,7 +17,7 @@ public class AppConfig {
 
     @Bean
     public SessionFactory sessionFactory() {
-        return HibernateUtils.buildSessionFactory(HIBERNATE_CFG_XML,
+        return SessionFactoryUtils.buildSessionFactory(HIBERNATE_CFG_XML,
                 Bet.class,
                 PersonsInGames.class,
                 Game.class,
