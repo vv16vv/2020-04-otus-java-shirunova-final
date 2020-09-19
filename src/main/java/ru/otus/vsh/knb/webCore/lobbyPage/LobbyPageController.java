@@ -91,7 +91,7 @@ public class LobbyPageController {
                 MsClientNames.DATA_BASE.name(),
                 NewGameData.builder().player1(loggedInPerson).get(), MessageType.NEW_GAME,
                 replay -> {
-                    val gameData = ((NewGameReplyData) replay).getGameData();
+                    val gameData = ((OneGameReplyData) replay).getGameData();
                     val newGame = new UIGameData(
                             String.valueOf(gameData.getGame().getId()),
                             gameData.title(),

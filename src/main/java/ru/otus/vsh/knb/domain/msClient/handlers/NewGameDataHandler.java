@@ -6,7 +6,7 @@ import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.domain.GameProcessor;
 import ru.otus.vsh.knb.domain.msClient.data.GameData;
 import ru.otus.vsh.knb.domain.msClient.data.NewGameData;
-import ru.otus.vsh.knb.domain.msClient.data.NewGameReplyData;
+import ru.otus.vsh.knb.domain.msClient.data.OneGameReplyData;
 import ru.otus.vsh.knb.msCore.common.ResponseProduceRequestHandler;
 import ru.otus.vsh.knb.msCore.message.Message;
 
@@ -14,14 +14,14 @@ import java.util.Optional;
 
 /**
  * Исполняется клиентом [DataBaseMSClient]
- * при обработке сообщения NEW_PLAYER
+ * при обработке сообщения NEW_GAME
  */
 @AllArgsConstructor
-public class NewGameDataHandler implements ResponseProduceRequestHandler<NewGameData, NewGameReplyData> {
+public class NewGameDataHandler implements ResponseProduceRequestHandler<NewGameData, OneGameReplyData> {
     private final GameProcessor gameProcessor;
 
     @Override
-    public Optional<Message<NewGameReplyData>> handle(Message<NewGameData> msg) {
+    public Optional<Message<OneGameReplyData>> handle(Message<NewGameData> msg) {
         val settings = gameProcessor.getSettings(
                 msg.getBody().getItems(),
                 msg.getBody().getTurns(),
@@ -37,6 +37,6 @@ public class NewGameDataHandler implements ResponseProduceRequestHandler<NewGame
                 .player1(msg.getBody().getPlayer1())
                 .wager(msg.getBody().getWager())
                 .get();
-        return Optional.of(Message.buildReplyMessage(msg, new NewGameReplyData(gameData)));
+        return Optional.of(Message.buildReplyMessage(msg, new OneGameReplyData(gameData)));
     }
 }

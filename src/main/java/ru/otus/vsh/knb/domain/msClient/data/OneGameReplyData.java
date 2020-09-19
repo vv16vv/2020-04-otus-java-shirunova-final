@@ -4,6 +4,6 @@ import lombok.Value;
 import ru.otus.vsh.knb.msCore.common.MessageData;
 
 @Value
-public class NewGameReplyData implements MessageData {
+public class OneGameReplyData implements MessageData {
     GameData gameData;
 }

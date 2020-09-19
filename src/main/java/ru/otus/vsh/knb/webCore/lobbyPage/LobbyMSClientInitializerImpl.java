@@ -21,7 +21,7 @@ public class LobbyMSClientInitializerImpl implements LobbyMSClientInitializer {
     public LobbyControllerMSClient lobbyControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry) {
         HandlersStore store = new HandlersStoreImpl();
         store.addHandler(MessageType.AVAIL_GAMES, new CallbackCallRequestHandler<NewPlayerData, NewPlayerReplyData>(callbackRegistry));
-        store.addHandler(MessageType.NEW_GAME, new CallbackCallRequestHandler<NewGameData, NewGameReplyData>(callbackRegistry));
+        store.addHandler(MessageType.NEW_GAME, new CallbackCallRequestHandler<NewGameData, OneGameReplyData>(callbackRegistry));
         val newPlayerControllerMSClient = new LobbyControllerMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(newPlayerControllerMSClient);
 
