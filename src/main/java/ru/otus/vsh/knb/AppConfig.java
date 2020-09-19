@@ -6,6 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.vsh.knb.dbCore.model.*;
 import ru.otus.vsh.knb.dbCore.hibernate.SessionFactoryUtils;
+import ru.otus.vsh.knb.webCore.GameDataKeeper;
+import ru.otus.vsh.knb.webCore.GameDataKeeperImpl;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.SessionKeeperImpl;
 
@@ -26,6 +28,10 @@ public class AppConfig {
                 Account.class);
     }
 
+    @Bean
+    public GameDataKeeper gameDataKeeper() {
+        return new GameDataKeeperImpl();
+    }
 
     @Bean
     public SessionKeeper sessionKeeper() {

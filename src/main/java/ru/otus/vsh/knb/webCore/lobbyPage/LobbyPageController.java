@@ -16,6 +16,7 @@ import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.domain.msClient.data.*;
 import ru.otus.vsh.knb.msCore.MsClientNames;
 import ru.otus.vsh.knb.msCore.message.MessageType;
+import ru.otus.vsh.knb.webCore.GameDataKeeper;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameData;
@@ -41,6 +42,7 @@ public class LobbyPageController {
 
     private final SimpMessagingTemplate template;
     private final SessionKeeper sessionKeeper;
+    private final GameDataKeeper gameDataKeeper;
     private final LobbyControllerMSClient lobbyControllerMSClient;
 
     @GetMapping(Routes.LOBBY)
@@ -102,6 +104,7 @@ public class LobbyPageController {
                                     template.convertAndSend(Routes.TOPIC_GAMES + "." + id, Collections.singletonList(newGame));
                                 }
                             });
+                    gameDataKeeper.add(sessionId,gameData);
                 }
         );
         lobbyControllerMSClient.sendMessage(message);
@@ -153,6 +156,7 @@ public class LobbyPageController {
                                     }
                                 });
                     }
+                    gameDataKeeper.addAndUpdate(sessionId,gameData);
                 }
         );
         lobbyControllerMSClient.sendMessage(message);
