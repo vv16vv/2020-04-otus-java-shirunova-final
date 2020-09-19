@@ -40,6 +40,7 @@ public class BaseDaoTest {
     protected DBServiceGame dbServiceGame;
     protected DBServicePersonsInGames dbServicePersonsInGames;
     protected DBServiceBet dbServiceBet;
+    protected DBServiceGameSettings dbServiceGameSettings;
 
     protected GameProcessor gameProcessor;
 
@@ -64,8 +65,9 @@ public class BaseDaoTest {
         dbServiceGame = new DbServiceGameImpl(gameDaoHibernate);
         dbServicePersonsInGames = new DbServicePersonsInGamesImpl(personsInGamesDaoHibernate);
         dbServiceBet = new DbServiceBetImpl(betDaoHibernate);
+        dbServiceGameSettings = new DbServiceGameSettingsImpl(gameSettingsDaoHibernate);
 
-        gameProcessor = new GameProcessorImpl(dbServicePerson, dbServiceGame, dbServicePersonsInGames, dbServiceBet);
+        gameProcessor = new GameProcessorImpl(dbServicePerson, dbServiceGame, dbServicePersonsInGames, dbServiceBet, dbServiceGameSettings);
     }
 
     @AfterEach

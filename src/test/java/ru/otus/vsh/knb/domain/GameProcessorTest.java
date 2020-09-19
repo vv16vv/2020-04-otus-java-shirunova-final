@@ -199,8 +199,8 @@ public class GameProcessorTest extends BaseDaoTest {
         val game = gameProcessor.startNewGame(firstPlayer);
         assertThat(game).isPresent();
 
-        val result = gameProcessor.joinGameAsPlayer(game.get(), secondPlayer);
-        assertThat(result).isTrue();
+        val gameData = gameProcessor.joinGameAsPlayer(game.get(), secondPlayer);
+        assertThat(gameData.getPlayer2()).isEqualTo(secondPlayer);
 
         val pigs = dbServicePersonsInGames.personsByGame(game.get());
         assertThat(pigs).hasSize(2);
@@ -232,8 +232,8 @@ public class GameProcessorTest extends BaseDaoTest {
         val game = gameProcessor.startNewGame(firstPlayer, wager);
         assertThat(game).isPresent();
 
-        val result = gameProcessor.joinGameAsPlayer(game.get(), secondPlayer);
-        assertThat(result).isTrue();
+        val gameData = gameProcessor.joinGameAsPlayer(game.get(), secondPlayer);
+        assertThat(gameData.getPlayer2()).isEqualTo(secondPlayer);
 
         val pigs = dbServicePersonsInGames.personsByGame(game.get());
         assertThat(pigs).hasSize(2);
@@ -324,7 +324,8 @@ public class GameProcessorTest extends BaseDaoTest {
 
         gameProcessor.joinGameAsPlayer(game.get(), secondPlayer);
 
-        gameProcessor.joinGameAsObserver(game.get(), thirdPlayer);
+        val gameData = gameProcessor.joinGameAsObserver(game.get(), thirdPlayer);
+        assertThat(gameData.getObservers()).contains(thirdPlayer);
 
         val pigs = dbServicePersonsInGames.personsByGame(game.get());
         assertThat(pigs).hasSize(3);
