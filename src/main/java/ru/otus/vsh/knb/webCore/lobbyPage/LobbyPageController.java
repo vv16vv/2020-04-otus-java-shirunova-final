@@ -61,10 +61,11 @@ public class LobbyPageController {
 
     @MessageMapping(Routes.API_LOBBY_HELLO)
     public void loadData(@DestinationVariable String sessionId) {
-        val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
+        val loggedInPerson = sessionKeeper.get(sessionId);
+        if(loggedInPerson.isEmpty()) return;
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
-                new AvailableGamesForPersonData(loggedInPerson), MessageType.AVAIL_GAMES,
+                new AvailableGamesForPersonData(loggedInPerson.get()), MessageType.AVAIL_GAMES,
                 replay -> {
                     val data = ((AvailableGamesForPersonReplayData) replay);
                     val games = data
@@ -75,7 +76,7 @@ public class LobbyPageController {
                                     String.valueOf(gameData.getGame().getId()),
                                     gameData.title(),
                                     String.valueOf(gameData.getWager()),
-                                    gameData.style(loggedInPerson).title()))
+                                    gameData.style(loggedInPerson.get()).title()))
                             .collect(Collectors.toList());
                     template.convertAndSend(Routes.TOPIC_GAMES + "." + sessionId, games);
                 }
