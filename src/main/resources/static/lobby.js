@@ -109,16 +109,18 @@ const formOneGameLine = (game) => {
 // - title
 // - bet
 const updateGame = (game) => {
-    const trId = "#game${game.id}";
+    console.log("update game = ", game)
+    const trId = `#game${game.id}`;
     const tr = $(trId).remove();
     $("#avail-games-div").append(formOneGameLine(game))
 }
 
 // asPlayer - true if as a player, false if as an observer
 const processJoinGame = (asPlayer, game) => {
-    console.log("processJoinGame: game = ", game, "; asPlayer = ", asPlayer)
+    const sessionId = $("#sessionId").text().toString()
+    console.log("processJoinGame: game = ", game, "; asPlayer = ", asPlayer, "; sessionId = ", sessionId)
     stompClient.send(`${topicGameJoin}.${sessionId}`, {}, JSON.stringify({
-        'isPlayer': asPlayer,
+        'isPlayer': asPlayer.toString(),
         'gameId': game.id
     }))
     disconnect()

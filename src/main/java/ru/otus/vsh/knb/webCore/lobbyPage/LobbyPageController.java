@@ -112,7 +112,7 @@ public class LobbyPageController {
         val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
         val joinGameData = JoinGameData.builder()
                 .person(loggedInPerson)
-                .isPlayer(uiJoinGameData.isPlayer())
+                .isPlayer(Boolean.parseBoolean(uiJoinGameData.getIsPlayer()))
                 .gameId(uiJoinGameData.getGameId())
                 .get();
         val message = lobbyControllerMSClient.produceMessage(
@@ -125,7 +125,7 @@ public class LobbyPageController {
                             gameData.title(),
                             String.valueOf(gameData.getWager()),
                             gameData.style(loggedInPerson).title());
-                    val statusMessage = uiJoinGameData.isPlayer() ?
+                    val statusMessage = joinGameData.isPlayer() ?
                             String.format("%s достойный соперник!", joinGameData.getPerson().getName()) :
                             String.format("%s заглянул на огонек", joinGameData.getPerson().getName());
                     val player1SessionId = sessionKeeper.get(gameData.getPlayer1());
@@ -144,12 +144,12 @@ public class LobbyPageController {
                                     template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + id, statusMessage);
                                 }
                             });
-                    if (uiJoinGameData.isPlayer()) {
+                    if (joinGameData.isPlayer()) {
                         sessionKeeper
                                 .sessions()
                                 .forEach(id -> {
                                     if (!sessionId.equals(id)) {
-                                        template.convertAndSend(Routes.TOPIC_GAMES_UPD + "." + id, Collections.singletonList(newGame));
+                                        template.convertAndSend(Routes.TOPIC_GAMES_UPD + "." + id, newGame);
                                     }
                                 });
                     }

@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class UIJoinGameData {
-    boolean isPlayer;
+    String isPlayer;
     long gameId;
 }
