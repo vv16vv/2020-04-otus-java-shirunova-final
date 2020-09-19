@@ -11,6 +11,45 @@
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 </head>
 <body>
-<h2>Игра [[${playerName}]]</h2>
+<div class="topRow" >
+    <span id="money1" class="gameMoneyRight col-3">500 <i class="far fa-money-bill-alt"></i></span>
+    <span id="title" class="gameTitle col-6"> playerName1 vs playerName2 </span>
+    <span id="money2" class="gameMoneyLeft col-3">400 <i class="far fa-money-bill-alt"></i></span>
+</div>
+<div class="topRow">
+    <span id="count1" class="gameTextRight col-5">2</span>
+    <span class="gameTextCenter col-2"> : </span>
+    <span id="count2" class="gameTextLeft col-5">3</span>
+</div>
+<div class="topRow">
+    <span class="gameTextCenter col-12"> Раунд <span id="currentTurn">1</span> из <span id="allTurns">3</span></span>
+</div>
+<div class="topRow">
+    <span class="gameTextCenter col-12"> Ставка <span id="gameBet">0</span> <i class="far fa-money-bill-alt"></i></span>
+</div>
+<div id="gameStatus" class="gameTextCenter col-12">Скоро игра начнется</div>
+<div id="playerDiv">
+    <div class="topRow" style="text-align: left">
+        <span class="gameTextLeft col-2"> Выручайки <span id="availCheats">0</span> из <span id="allCheats">1</span> </span>
+        <input id="useCheatBtn"
+               type="button"
+               class="btn btn-secondary col-2"
+               value="Использовать"/>
+    </div>
+    <div class="topRow">
+        <span class="gameTextLeft col-12"> Ваш ход, [[${playerName}]] </span>
+    </div>
+    <div id="items"></div>
+</div>
+<div id="gameDiv">
+    <span id="item1">камень</span> <span id="result"> &lt; </span> <span id="item2">ножницы</span>
+</div>
+<div id="exit">
+    <input id="exitBtn"
+           type="button"
+           class="btn btn-primary"
+           value="Выход"/>
+</div>
+
 </body>
 </html>
