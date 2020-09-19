@@ -14,4 +14,6 @@ public interface SessionKeeper {
 
     Set<String> sessions();
 
+    String get(Person person);
+
 }
