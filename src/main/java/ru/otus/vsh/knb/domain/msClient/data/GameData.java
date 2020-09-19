@@ -8,7 +8,9 @@ import ru.otus.vsh.knb.webCore.lobbyPage.AvailGameStyles;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Value
 @Builder(buildMethodName = "get")
@@ -17,6 +19,8 @@ public class GameData implements Comparable<GameData> {
     Person player1;
     @Builder.Default
     Person player2 = null;
+    @Builder.Default
+    Set<Person> observers = new HashSet<>();
     @Builder.Default
     long wager = 0L;
 

@@ -11,6 +11,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -78,6 +80,11 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
+    public Optional<Game> gameById(long id) {
+        return dbServiceGame.getObject(id);
+    }
+
+    @Override
     public List<GameData> gamesToJoinAsPlayer(@Nonnull Person person) {
         return gamesToJoin(person, Roles.Player2);
     }
@@ -138,16 +145,55 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
-    public boolean joinGameAsPlayer(@Nonnull Game game, @Nonnull Person person) {
+    public GameData joinGameAsPlayer(@Nonnull Game game, @Nonnull Person person) {
         val bet = betForGame(game);
-        if (bet.isPresent() && !person.canAfford(bet.get().getWager())) return false;
+        if (bet.isPresent() && !person.canAfford(bet.get().getWager()))
+            throw new GameException(String.format("Person %s cannot afford wager %d", person.getLogin(), bet.get().getWager()));
         dbServicePersonsInGames.joinGame(game, person, Roles.Player2);
-        return true;
+        return GameData.builder()
+                .game(game)
+                .player1(getPlayer1(game))
+                .player2(person)
+                .observers(getObservers(game))
+                .wager(bet.map(Bet::getWager).orElse(0L))
+                .get();
     }
 
     @Override
-    public void joinGameAsObserver(@Nonnull Game game, @Nonnull Person person) {
+    public GameData joinGameAsObserver(@Nonnull Game game, @Nonnull Person person) {
         dbServicePersonsInGames.joinGame(game, person, Roles.Observer);
+        val bet = betForGame(game);
+        return GameData.builder()
+                .game(game)
+                .player1(getPlayer1(game))
+                .player2(getPlayer2(game).orElse(null))
+                .observers(getObservers(game))
+                .wager(bet.map(Bet::getWager).orElse(0L))
+                .get();
+    }
+
+    @Override
+    public Person getPlayer1(@Nonnull Game game) {
+        return dbServicePersonsInGames
+                .personByGameAndRolePlayer1(game)
+                .orElseThrow(() -> new GameException("Game without player1"))
+                .getPerson();
+    }
+
+    @Override
+    public Optional<Person> getPlayer2(@Nonnull Game game) {
+        return dbServicePersonsInGames
+                .personByGameAndRolePlayer2(game)
+                .map(PersonsInGames::getPerson);
+    }
+
+    @Override
+    public Set<Person> getObservers(@Nonnull Game game) {
+        return dbServicePersonsInGames
+                .personByGameAndRoleObserver(game)
+                .stream()
+                .map(PersonsInGames::getPerson)
+                .collect(Collectors.toSet());
     }
 
     @Override
