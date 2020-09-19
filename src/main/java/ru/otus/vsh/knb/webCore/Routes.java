@@ -15,11 +15,13 @@ public final class Routes {
     public static final String API_GAME_WS = "/api/game-ws";
     public static final String API_LOBBY_HELLO = "/lobby-hello.{sessionId}";
     public static final String API_GAME_START = "/game-start.{sessionId}";
+    public static final String API_GAME_JOIN = "/game-join.{sessionId}";
 
     public static final String API_ANSWER = "/answer";
 
     public static final String TOPIC = "/topic";
     public static final String TOPIC_GAMES = "/topic/games";
+    public static final String TOPIC_GAMES_UPD = "/topic/games-upd";
     public static final String TOPIC_GAME_STATUS = "/topic/game-status";
 
     public static final String ERROR = "/error";

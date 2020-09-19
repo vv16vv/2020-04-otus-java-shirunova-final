@@ -11,18 +11,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.vsh.knb.dbCore.model.Person;
 import ru.otus.vsh.knb.domain.GameException;
-import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonData;
-import ru.otus.vsh.knb.domain.msClient.data.AvailableGamesForPersonReplayData;
-import ru.otus.vsh.knb.domain.msClient.data.NewGameData;
-import ru.otus.vsh.knb.domain.msClient.data.NewGameReplyData;
+import ru.otus.vsh.knb.domain.msClient.data.*;
 import ru.otus.vsh.knb.msCore.MsClientNames;
 import ru.otus.vsh.knb.msCore.message.MessageType;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameData;
+import ru.otus.vsh.knb.webCore.lobbyPage.data.UIJoinGameData;
 
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -85,7 +82,7 @@ public class LobbyPageController {
     }
 
     @MessageMapping(Routes.API_GAME_START)
-    public RedirectView startGame(@DestinationVariable String sessionId) {
+    public void startGame(@DestinationVariable String sessionId) {
         val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
@@ -105,12 +102,60 @@ public class LobbyPageController {
                                     template.convertAndSend(Routes.TOPIC_GAMES + "." + id, Collections.singletonList(newGame));
                                 }
                             });
-
                 }
         );
         lobbyControllerMSClient.sendMessage(message);
+    }
 
-        return new RedirectView(Routes.GAME, true);
+    @MessageMapping(Routes.API_GAME_JOIN)
+    public void joinGame(@DestinationVariable String sessionId, UIJoinGameData uiJoinGameData) {
+        val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
+        val joinGameData = JoinGameData.builder()
+                .person(loggedInPerson)
+                .isPlayer(uiJoinGameData.isPlayer())
+                .gameId(uiJoinGameData.getGameId())
+                .get();
+        val message = lobbyControllerMSClient.produceMessage(
+                MsClientNames.DATA_BASE.name(),
+                joinGameData, MessageType.JOIN_GAME,
+                replay -> {
+                    val gameData = ((OneGameReplyData) replay).getGameData();
+                    val newGame = new UIGameData(
+                            String.valueOf(gameData.getGame().getId()),
+                            gameData.title(),
+                            String.valueOf(gameData.getWager()),
+                            gameData.style(loggedInPerson).title());
+                    val statusMessage = uiJoinGameData.isPlayer() ?
+                            String.format("%s достойный соперник!", joinGameData.getPerson().getName()) :
+                            String.format("%s заглянул на огонек", joinGameData.getPerson().getName());
+                    val player1SessionId = sessionKeeper.get(gameData.getPlayer1());
+                    if (!player1SessionId.isEmpty()) {
+                        template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + player1SessionId, statusMessage);
+                    }
+                    val player2SessionId = sessionKeeper.get(gameData.getPlayer2());
+                    if (!player2SessionId.isEmpty()) {
+                        template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + player2SessionId, statusMessage);
+                    }
+                    gameData.getObservers()
+                            .stream()
+                            .map(sessionKeeper::get)
+                            .forEach(id -> {
+                                if (!sessionId.isEmpty()) {
+                                    template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + id, statusMessage);
+                                }
+                            });
+                    if (uiJoinGameData.isPlayer()) {
+                        sessionKeeper
+                                .sessions()
+                                .forEach(id -> {
+                                    if (!sessionId.equals(id)) {
+                                        template.convertAndSend(Routes.TOPIC_GAMES_UPD + "." + id, Collections.singletonList(newGame));
+                                    }
+                                });
+                    }
+                }
+        );
+        lobbyControllerMSClient.sendMessage(message);
     }
 
 

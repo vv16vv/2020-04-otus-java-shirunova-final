@@ -24,6 +24,7 @@ public class DBMSClientInitializerImpl implements DBMSClientInitializer {
         store.addHandler(MessageType.PLAYERS, new PlayersDataHandler(gameProcessor));
         store.addHandler(MessageType.AVAIL_GAMES, new AvailableGamesForPersonDataHandler(gameProcessor));
         store.addHandler(MessageType.NEW_GAME, new NewGameDataHandler(gameProcessor));
+        store.addHandler(MessageType.JOIN_GAME, new JoinGameDataHandler(gameProcessor));
         val databaseMsClient = new DataBaseMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(databaseMsClient);
 
