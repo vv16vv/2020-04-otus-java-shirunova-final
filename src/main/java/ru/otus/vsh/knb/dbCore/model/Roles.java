@@ -9,12 +9,14 @@ import java.util.Arrays;
 @AllArgsConstructor
 @Accessors(fluent = true)
 public enum Roles {
-    Player1(1),
-    Player2(2),
-    Observer(3);
+    Player1(1, "Игрок 1"),
+    Player2(2, "Игрок 2"),
+    Observer(3, "Наблюдатель");
 
     @Getter
     private final int id;
+    @Getter
+    private final String title;
 
     public static Roles fromId(int id) {
         return Arrays.stream(values())
