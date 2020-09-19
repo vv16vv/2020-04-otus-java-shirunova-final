@@ -4,15 +4,15 @@ import lombok.val;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.knb.dbCore.model.Person;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
 public class SessionKeeperImpl implements SessionKeeper {
-    private final Map<String, Person> repository = new HashMap<>();
+    private final Map<String, Person> repository = new ConcurrentHashMap<>();
 
     @Override
     public void add(String sessionId, Person person) {
@@ -39,7 +39,7 @@ public class SessionKeeperImpl implements SessionKeeper {
     }
 
     @Override
-    public String get(Person person) {
+    public synchronized String get(Person person) {
         val entries = repository.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().equals(person))
