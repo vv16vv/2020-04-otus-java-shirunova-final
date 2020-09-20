@@ -14,7 +14,7 @@ const start = () => {
             const sessionId = $("#sessionId").text().toString()
             console.log("start: sessionId = ", sessionId)
             stompClient.subscribe(`${topicGameInfo}.${sessionId}`, (gameInfo) => showInitialGameInfo(JSON.parse(gameInfo.body)));
-            stompClient.subscribe(`${topicGameStatus}.${sessionId}`, (status) => updateGameStatus(JSON.parse(status.body)));
+            stompClient.subscribe(`${topicGameStatus}.${sessionId}`, (status) => updateGameStatus(status.body));
 
             stompClient.send(`${topicGameHello}.${sessionId}`, {}, {})
         });

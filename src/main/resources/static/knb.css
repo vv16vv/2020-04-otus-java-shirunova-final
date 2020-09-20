@@ -112,3 +112,8 @@ a:hover {
     font-size: medium;
     text-align: right;
 }
+
+.gameStatus {
+    font-size: smaller;
+    font-style: italic;
+}

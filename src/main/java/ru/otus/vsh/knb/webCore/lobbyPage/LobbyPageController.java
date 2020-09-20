@@ -97,7 +97,6 @@ public class LobbyPageController {
                             gameData.title(),
                             String.valueOf(gameData.getWager()),
                             gameData.style(loggedInPerson).title());
-                    template.convertAndSend(Routes.TOPIC_GAME_STATUS + "." + sessionId, "Кто еще захочет играть с тобой? Ждем...");
                     sessionKeeper
                             .sessions()
                             .forEach(id -> {
