@@ -1,4 +1,4 @@
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" content="text/html;">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="ru" content="text/html;">
 <head>
     <title>Игра [[${playerName}]]</title>
     <meta charset="utf-8">
@@ -9,12 +9,14 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/game.js"></script>
 </head>
 <body>
-<div class="topRow" >
-    <span id="money1" class="gameMoneyRight col-3">500 <i class="far fa-money-bill-alt"></i></span>
-    <span id="title" class="gameTitle col-6"> playerName1 vs playerName2 </span>
-    <span id="money2" class="gameMoneyLeft col-3">400 <i class="far fa-money-bill-alt"></i></span>
+<div id="sessionId" th:text="${sessionId}" hidden></div>
+<div class="topRow">
+    <span class="gameMoneyRight col-3"><span id="money1">500</span> <i class="far fa-money-bill-alt"></i></span>
+    <span class="gameTextCenter col-6"> <span id="playerName1" class="gameTitle">playerName1</span> vs <span id="playerName2" class="gameTitle">playerName2</span> </span>
+    <span class="gameMoneyLeft col-3"> <span id="money2">400</span> <i class="far fa-money-bill-alt"></i></span>
 </div>
 <div class="topRow">
     <span id="count1" class="gameTextRight col-5">2</span>
@@ -30,7 +32,8 @@
 <div id="gameStatus" class="gameTextCenter col-12">Скоро игра начнется</div>
 <div id="playerDiv">
     <div class="topRow" style="text-align: left">
-        <span class="gameTextLeft col-2"> Выручайки <span id="availCheats">0</span> из <span id="allCheats">1</span> </span>
+        <span class="gameTextLeft col-2"> Выручайки <span id="availCheats">0</span> из <span
+                id="allCheats">1</span> </span>
         <input id="useCheatBtn"
                type="button"
                class="btn btn-secondary col-2"
