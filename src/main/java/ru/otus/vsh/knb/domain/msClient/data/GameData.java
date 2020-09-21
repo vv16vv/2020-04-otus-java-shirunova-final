@@ -22,6 +22,15 @@ public class GameData implements Comparable<GameData> {
     @Builder.Default
     long wager = 0L;
 
+    @Builder.Default
+    int currentTurn = 0;
+    @Builder.Default
+    int usedCheats = 0;
+    @Builder.Default
+    int score1 = 0;
+    @Builder.Default
+    int score2 = 0;
+
     public String title() {
         return String.format("%s %s", player1.getLogin(), game.getSettings().title());
     }
