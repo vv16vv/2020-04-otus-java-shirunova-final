@@ -42,7 +42,7 @@ public class SessionKeeperImpl implements SessionKeeper {
     public synchronized String get(Person person) {
         val entries = repository.entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().equals(person))
+                .filter(entry -> entry.getValue().getId() == person.getId())
                 .collect(Collectors.toList());
         if (entries.isEmpty()) return "";
         else return entries.get(0).getKey();
