@@ -1,18 +1,20 @@
 package ru.otus.vsh.knb.webCore;
 
-import ru.otus.vsh.knb.dbCore.model.Game;
 import ru.otus.vsh.knb.domain.msClient.data.GameData;
+import ru.otus.vsh.knb.webCore.gamePage.data.TurnData;
 
 import java.util.Optional;
 import java.util.Set;
 
 public interface GameDataKeeper {
-    void add(String sessionId, GameData gameData);
+    void save(String sessionId, GameData gameData);
 
     Optional<GameData> get(String sessionId);
 
-    void addAndUpdate(String sessionId, GameData gameData);
+    Optional<GameData> get(long gameId);
 
-    Set<String> byGame(Game game);
+    Set<String> byGameId(long gameId);
+
+    TurnData getTurnData(long gameId);
 
 }

@@ -104,7 +104,7 @@ public class LobbyPageController {
                                     template.convertAndSend(Routes.TOPIC_GAMES + "." + id, Collections.singletonList(newGame));
                                 }
                             });
-                    gameDataKeeper.add(sessionId,gameData);
+                    gameDataKeeper.save(sessionId, gameData);
                 }
         );
         lobbyControllerMSClient.sendMessage(message);
@@ -156,7 +156,7 @@ public class LobbyPageController {
                                     }
                                 });
                     }
-                    gameDataKeeper.addAndUpdate(sessionId,gameData);
+                    gameDataKeeper.save(sessionId, gameData);
                 }
         );
         lobbyControllerMSClient.sendMessage(message);

@@ -3,10 +3,16 @@ package ru.otus.vsh.knb.webCore.gamePage.data;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder(buildMethodName = "get")
 public class UIGameInitialInfo {
+    long gameId;
+
     String playerName1;
+    @Builder.Default
+    String isPlayer = "true";
     long money1;
     @Builder.Default
     int count1 = 0;
@@ -19,11 +25,9 @@ public class UIGameInitialInfo {
     int count2 = 0;
 
     int turns;
-    @Builder.Default
-    int currentTurn = 0;
+    List<UIFigure> figures;
 
     int cheats;
-    int availCheats;
 
     @Builder.Default
     long bet = 0;

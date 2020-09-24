@@ -5,6 +5,9 @@ import lombok.Value;
 import ru.otus.vsh.knb.dbCore.model.Game;
 import ru.otus.vsh.knb.dbCore.model.Person;
 import ru.otus.vsh.knb.dbCore.model.Roles;
+import ru.otus.vsh.knb.domain.GameException;
+import ru.otus.vsh.knb.domain.GameRule;
+import ru.otus.vsh.knb.domain.GameRules;
 import ru.otus.vsh.knb.webCore.lobbyPage.AvailGameStyles;
 
 import javax.annotation.Nonnull;
@@ -21,15 +24,6 @@ public class GameData implements Comparable<GameData> {
     Set<Person> observers = new HashSet<>();
     @Builder.Default
     long wager = 0L;
-
-    @Builder.Default
-    int currentTurn = 0;
-    @Builder.Default
-    int usedCheats = 0;
-    @Builder.Default
-    int score1 = 0;
-    @Builder.Default
-    int score2 = 0;
 
     public String title() {
         return String.format("%s %s", player1.getLogin(), game.getSettings().title());
@@ -53,5 +47,11 @@ public class GameData implements Comparable<GameData> {
         if (person.equals(player2)) return Optional.of(Roles.Player2);
         if (observers.contains(person)) return Optional.of(Roles.Observer);
         return Optional.empty();
+    }
+
+    public GameRule getRule() {
+        return GameRules
+                .get(game.getSettings().getNumberOfItems())
+                .orElseThrow(() -> new GameException(String.format("Incorrect number of items %d", game.getSettings().getNumberOfItems())));
     }
 }

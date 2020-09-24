@@ -10,11 +10,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.RequestContextHolder;
+import ru.otus.vsh.knb.dbCore.model.EventResults;
+import ru.otus.vsh.knb.domain.DefaultValues;
 import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.webCore.GameDataKeeper;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
-import ru.otus.vsh.knb.webCore.gamePage.data.UIGameInitialInfo;
+import ru.otus.vsh.knb.webCore.gamePage.data.*;
+
+import java.util.concurrent.BrokenBarrierException;
 
 @Controller
 @AllArgsConstructor
@@ -43,22 +47,157 @@ public class GamePageController {
         if (loggedInPerson.isEmpty()) return;
         val gameData = gameDataKeeper.get(sessionId);
         if (gameData.isEmpty()) return;
+        boolean isGameReady = false;
+        boolean isPlayer = loggedInPerson.get().equals(gameData.get().getPlayer1()) ||
+                (gameData.get().getPlayer2() != null && loggedInPerson.get().equals(gameData.get().getPlayer2()));
         val initialGameInfo = UIGameInitialInfo.builder()
+                .gameId(gameData.get().getGame().getId())
                 .playerName1(gameData.get().getPlayer1().getName())
+                .isPlayer(String.valueOf(isPlayer))
                 .money1(gameData.get().getPlayer1().getAccount().getSum())
                 .turns(gameData.get().getGame().getSettings().getNumberOfTurns())
+                .figures(UIFigure.from(gameData.get().getRule().getRange()))
                 .cheats(gameData.get().getGame().getSettings().getNumberOfCheats())
-                .availCheats(gameData.get().getGame().getSettings().getNumberOfCheats())
                 .bet(gameData.get().getWager());
         if (gameData.get().getPlayer2() != null) {
+            isGameReady = true;
             initialGameInfo
                     .playerName2(gameData.get().getPlayer2().getName())
                     .money2(gameData.get().getPlayer2().getAccount().getSum());
+        } else {
+            initialGameInfo
+                    .playerName2("???")
+                    .money2(0);
         }
 
-        gameDataKeeper
-                .byGame(gameData.get().getGame())
-                .forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_INFO + "." + id, initialGameInfo.get()));
+        if (isPlayer) {
+            val playersInGame = gameDataKeeper.byGameId(gameData.get().getGame().getId());
+            playersInGame.forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_INFO + "." + id, initialGameInfo.get()));
+            if (isGameReady) {
+                val turnReady = UITurnReady.builder()
+                        .turn(0)
+                        .availCheats(initialGameInfo.get().getCheats())
+                        .get();
+                playersInGame.forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_TURN_START + "." + id, turnReady));
+            }
+        } else {
+            // Observer sends game info only to themself
+            template.convertAndSend(Routes.TOPIC_GAME_INFO + "." + sessionId, initialGameInfo.get());
+        }
+
+    }
+
+    @MessageMapping(Routes.API_GAME_TURN_END)
+    public void processTurn(@DestinationVariable long gameId, UITurnEnd turnEnd) {
+        val gameData = gameDataKeeper.get(gameId);
+        if (gameData.isEmpty()) throw new GameException(String.format("No game data for gameId %d", gameId));
+        val turnData = gameDataKeeper.getTurnData(gameId);
+        val person = sessionKeeper.get(turnEnd.getSessionId())
+                .orElseThrow(() -> new GameException("Player participates without session id"));
+        if (gameData.get().getPlayer1().equals(person)) {
+            turnData.figure1(turnEnd.getFigure());
+        } else {
+            turnData.figure2(turnEnd.getFigure());
+        }
+
+        try {
+            turnData.barrier().await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+
+        if (!turnData.isProcessing()) {
+            synchronized (this) {
+                if (!turnData.isProcessing()) {
+                    turnData.isProcessing(true);
+                    switch (turnData.result()) {
+                        case Player1Won: {
+                            turnData
+                                    .gameData()
+                                    .getPlayer1()
+                                    .getAccount()
+                                    .increase(DefaultValues.GOLD_ONE_TURN);
+                            turnData.increaseScore1(DefaultValues.POINTS_WINNING);
+                            turnData.increaseScore2(DefaultValues.POINTS_LOSING);
+                            break;
+                        }
+                        case Player2Won: {
+                            turnData
+                                    .gameData()
+                                    .getPlayer2()
+                                    .getAccount()
+                                    .increase(DefaultValues.GOLD_ONE_TURN);
+                            turnData.increaseScore2(DefaultValues.POINTS_WINNING);
+                            turnData.increaseScore1(DefaultValues.POINTS_LOSING);
+                            break;
+                        }
+                        default: {
+                            turnData
+                                    .gameData()
+                                    .getPlayer1()
+                                    .getAccount()
+                                    .increase(DefaultValues.GOLD_ONE_DRAW);
+                            turnData
+                                    .gameData()
+                                    .getPlayer2()
+                                    .getAccount()
+                                    .increase(DefaultValues.GOLD_ONE_DRAW);
+                            turnData.increaseScore1(DefaultValues.POINTS_DRAW);
+                            turnData.increaseScore2(DefaultValues.POINTS_DRAW);
+                            break;
+                        }
+                    }
+
+                    // result for Player1 and observers
+                    String resultText1;
+                    if (turnData.result().equals(EventResults.Player1Won)) resultText1 = UIEvent.GREATER.getTitle();
+                    else if (turnData.result().equals(EventResults.Player2Won)) resultText1 = UIEvent.LESS.getTitle();
+                    else resultText1 = UIEvent.EQUAL.getTitle();
+                    val resultInfo1 = UIResultInfo.builder()
+                            .figure1(UIFigure.from(turnData.figure1()))
+                            .figure2(UIFigure.from(turnData.figure2()))
+                            .resultText(resultText1)
+                            .money1(turnData.gameData().getPlayer1().getAccount().getSum())
+                            .money2(turnData.gameData().getPlayer2().getAccount().getSum())
+                            .count1(turnData.score1())
+                            .count2(turnData.score2())
+                            .get();
+                    // result for Player2
+                    String resultText2;
+                    if (turnData.result().equals(EventResults.Player1Won)) resultText2 = UIEvent.LESS.getTitle();
+                    else if (turnData.result().equals(EventResults.Player2Won))
+                        resultText2 = UIEvent.GREATER.getTitle();
+                    else resultText2 = UIEvent.EQUAL.getTitle();
+                    val resultInfo2 = UIResultInfo.builder()
+                            .figure1(UIFigure.from(turnData.figure2()))
+                            .figure2(UIFigure.from(turnData.figure1()))
+                            .resultText(resultText2)
+                            .money1(turnData.gameData().getPlayer2().getAccount().getSum())
+                            .money2(turnData.gameData().getPlayer1().getAccount().getSum())
+                            .count1(turnData.score2())
+                            .count2(turnData.score1())
+                            .get();
+                    turnData.nextTurn();
+
+                    val sessionIdPlayer1 = sessionKeeper.get(turnData.gameData().getPlayer1());
+                    template.convertAndSend(
+                            Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer1,
+                            resultInfo1);
+
+                    val sessionIdPlayer2 = sessionKeeper.get(turnData.gameData().getPlayer2());
+                    template.convertAndSend(
+                            Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer2,
+                            resultInfo2);
+
+                    turnData.gameData().getObservers().forEach(p -> {
+                        val sessionIdObserver = sessionKeeper.get(p);
+                        template.convertAndSend(
+                                Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdObserver,
+                                resultInfo1);
+                    });
+                }
+            }
+        }
     }
 
 }

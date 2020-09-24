@@ -15,7 +15,11 @@
 <div id="sessionId" th:text="${sessionId}" hidden></div>
 <div class="topRow">
     <span class="gameMoneyRight col-3"><span id="money1">500</span> <i class="far fa-money-bill-alt"></i></span>
-    <span class="gameTextCenter col-6"> <span id="playerName1" class="gameTitle">playerName1</span> vs <span id="playerName2" class="gameTitle">playerName2</span> </span>
+    <span class="gameTextCenter col-6">
+        <span id="playerName1" class="gameTitle">playerName1</span>
+        vs
+        <span id="playerName2" class="gameTitle">playerName2</span>
+    </span>
     <span class="gameMoneyLeft col-3"> <span id="money2">400</span> <i class="far fa-money-bill-alt"></i></span>
 </div>
 <div class="topRow">
@@ -30,22 +34,59 @@
     <span class="gameTextCenter col-12"> Ставка <span id="gameBet">0</span> <i class="far fa-money-bill-alt"></i></span>
 </div>
 <div id="gameStatus" class="gameTextCenter gameStatus col-12">Скоро игра начнется</div>
-<div id="playerDiv">
-    <div class="topRow" style="text-align: left">
-        <span class="gameTextLeft col-2"> Выручайки <span id="availCheats">0</span> из <span
-                id="allCheats">1</span> </span>
-        <input id="useCheatBtn"
-               type="button"
-               class="btn btn-secondary col-2"
-               value="Использовать"/>
-    </div>
-    <div class="topRow">
-        <span class="gameTextLeft col-12"> Ваш ход, [[${playerName}]] </span>
-    </div>
-    <div id="items"></div>
-</div>
-<div id="gameDiv">
-    <span id="item1">камень</span> <span id="result"> &lt; </span> <span id="item2">ножницы</span>
+<div id="figures">
+    <table class="layoutTable">
+        <tr id="tr0">
+            <td id="cell0"></td>
+            <td>&nbsp;</td>
+            <td id="cell1"></td>
+            <td>&nbsp;</td>
+            <td id="cell2"></td>
+            <td>&nbsp;</td>
+            <td id="cell3"></td>
+            <td>&nbsp;</td>
+            <td id="cell4"></td>
+            <td>&nbsp;</td>
+            <td id="cell5"></td>
+        </tr>
+        <tr id="tr1">
+            <td>&nbsp;</td>
+            <td colspan="9">
+                <div id="playerCheatInfo" class="topRow">
+                    <span class="gameTextLeft col-6">
+                        Выручайки <span id="availCheats">0</span> из<span id="allCheats">1</span>
+                    </span>
+                    <input id="useCheatBtn"
+                           type="button"
+                           class="btn btn-secondary"
+                           value="Использовать"/>
+                </div>
+            </td>
+            <td id="cell6"></td>
+        </tr>
+        <tr id="tr2">
+            <td id="cell14"></td>
+            <td colspan="9">
+                <div id="gameDiv" class="topRow">
+                    <span id="item1"></span> <span id="result"></span> <span id="item2"></span>
+                </div>
+            </td>
+            <td id="cell7"></td>
+        </tr>
+        <tr id="tr4">
+            <td id="cell13"></td>
+            <td>&nbsp;</td>
+            <td id="cell12"></td>
+            <td>&nbsp;</td>
+            <td id="cell11"></td>
+            <td>&nbsp;</td>
+            <td id="cell10"></td>
+            <td>&nbsp;</td>
+            <td id="cell9"></td>
+            <td>&nbsp;</td>
+            <td id="cell8"></td>
+        </tr>
+    </table>
 </div>
 <div id="exit">
     <input id="exitBtn"

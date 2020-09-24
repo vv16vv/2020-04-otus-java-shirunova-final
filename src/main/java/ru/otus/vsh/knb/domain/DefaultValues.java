@@ -10,6 +10,7 @@ public class DefaultValues {
 
     public long INITIAL_SUM = 500L;
     public long GOLD_ONE_TURN = 50L;
+    public long GOLD_ONE_DRAW = 25L;
     public long GOLD_ONE_CHEAT = 100L;
     public long GOLD_ONE_GAME = 1000L;
 
