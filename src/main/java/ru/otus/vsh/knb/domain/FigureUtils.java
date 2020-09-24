@@ -43,7 +43,7 @@ public class FigureUtils {
 
     @Nonnull
     private List<Figure> getNWinMapFigure(int n, @Nonnull Figure figure) {
-        if (isNValid(n)) throw new GameException(String.format("Cannot create game with n = %d", n));
+        if (!isNValid(n)) throw new GameException(String.format("Cannot create game with n = %d", n));
         return getNFigures(n)
                 .stream()
                 .filter(f -> {
@@ -61,7 +61,7 @@ public class FigureUtils {
 
     @Nonnull
     public static Map<Figure, List<Figure>> getNWinMap(int n) {
-        if (isNValid(n)) throw new GameException(String.format("Cannot create game with n = %d", n));
+        if (!isNValid(n)) throw new GameException(String.format("Cannot create game with n = %d", n));
         val result = new HashMap<Figure, List<Figure>>(n);
         val figures = getNFigures(n);
         for (val figure : figures) {
