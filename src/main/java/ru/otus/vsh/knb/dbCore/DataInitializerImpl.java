@@ -3,32 +3,20 @@ package ru.otus.vsh.knb.dbCore;
 import lombok.val;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ru.otus.vsh.knb.dbCore.model.*;
+import ru.otus.vsh.knb.dbCore.model.Account;
+import ru.otus.vsh.knb.dbCore.model.GameSettings;
 import ru.otus.vsh.knb.domain.GameProcessor;
 
 @Component
 public class DataInitializerImpl implements DataInitializer {
-    //    private final DBServicePerson dbServicePerson;
-//    private final DBServiceGame dbServiceGame;
-//    private final DBServicePersonsInGames dbServicePersonsInGames;
-//    private final DBServiceBet dbServiceBet;
     private final GameProcessor gameProcessor;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializerImpl(PasswordEncoder passwordEncoder,
                                GameProcessor gameProcessor
-//                               DBServicePerson dbServicePerson,
-//                               DBServiceGame dbServiceGame,
-//                               DBServicePersonsInGames dbServicePersonsInGames,
-//                               DBServiceBet dbServiceBet
     ) {
         this.gameProcessor = gameProcessor;
         this.passwordEncoder = passwordEncoder;
-//        this.dbServicePerson = dbServicePerson;
-//        this.dbServiceGame = dbServiceGame;
-//        this.dbServicePersonsInGames = dbServicePersonsInGames;
-//        this.dbServiceBet = dbServiceBet;
-
         createInitialData();
     }
 
@@ -67,6 +55,6 @@ public class DataInitializerImpl implements DataInitializer {
         // default game for the player already participating in another game, without second player, with too big bet
         // participants: player4 as a first player
         val gameTooRich = gameProcessor.startNewGame(player4, settings, 900);
-        
+
     }
 }
