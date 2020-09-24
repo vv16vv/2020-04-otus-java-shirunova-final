@@ -36,14 +36,34 @@ const showInitialGameInfo = (gameInfo) => {
     $("#allTurns").text(gameInfo.turns)
     $("#currentTurn").text(gameInfo.currentTurn)
 
+    if(gameInfo.isPlayer.toLowerCase() !== 'true') $("#playerCheatInfo").hide()
     $("#allCheats").text(gameInfo.cheats)
     $("#availCheats").text(gameInfo.availCheats)
+
+    gameInfo.figures.forEach(figure => makeIcon(figure))
 
     $("#gameBet").text(gameInfo.bet)
 }
 
 const updateGameStatus = (status) => {
     $("#gameStatus").text(status)
+}
+
+const makeIcon = (figure) => {
+    const icon = $('<img/>')
+        .attr({
+            'src': `icons/${figure.icon}.png`,
+            'class': 'rounded-circle',
+            'alt': figure.title
+        })
+        .click(() => processIconClick(figure))
+    $(`#cell${figure.icon}`)
+        .empty()
+        .append(icon)
+}
+
+const processIconClick = (figure) => {
+    console.log("processIconClick on icon ", figure)
 }
 
 const disconnect = () => {
@@ -57,6 +77,5 @@ $(function () {
     $("form").on('submit', (event) => {
         event.preventDefault();
     });
-    $("#playerDiv").hide()
     start()
 });
