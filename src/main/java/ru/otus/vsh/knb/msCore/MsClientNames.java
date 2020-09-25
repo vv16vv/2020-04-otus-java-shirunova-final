@@ -11,7 +11,6 @@ public enum MsClientNames {
     GAME_KEEPER("GameKeeperMSClient"),
     GAME_CONTROLLER("GameControllerMSClient"),
     LOBBY_CONTROLLER("LobbyControllerMSClient"),
-    LOGIN_CONTROLLER("LoginControllerMSClient"),
     NEW_PLAYER_CONTROLLER("NewPlayerControllerMSClient"),
     PLAYERS_CONTROLLER("PlayersControllerMSClient"),
     ;

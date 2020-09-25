@@ -8,8 +8,5 @@ public enum MessageType {
     AVAIL_GAMES,
     NEW_GAME,
     JOIN_GAME,
-    NEXT_TASK,
-    ANSWER,
     END_GAME
-
 }

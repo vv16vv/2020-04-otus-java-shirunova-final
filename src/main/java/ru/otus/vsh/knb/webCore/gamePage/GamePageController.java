@@ -28,6 +28,8 @@ public class GamePageController {
 
     private final SimpMessagingTemplate template;
     private final SessionKeeper sessionKeeper;
+    private final GameDataKeeper gameDataKeeper;
+    private final GameControllerMSClient gameControllerMSClient;
 
     @GetMapping(Routes.GAME)
     public String getGamePage(Model model) {
