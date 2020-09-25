@@ -9,6 +9,10 @@ const topicGameTurnResult = '/topic/game-turn-result';
 
 const topicGameHello = '/api/game-hello';
 const topicGameTurnEnd = '/api/game-turn-end';
+const topicGameTurnNext = '/api/game-turn-next';
+const topicGameUseCheat = '/api/game-use-cheat';
+
+let buttonsInitialized = false;
 
 const start = () => {
     if (stompClient === null) {
@@ -50,6 +54,23 @@ const showInitialGameInfo = (sessionId, gameInfo) => {
     gameInfo.figures.forEach(figure => makeIcon(sessionId, gameInfo.gameId, figure, isPlayer))
 
     $("#gameBet").text(gameInfo.bet)
+
+    if (!buttonsInitialized) {
+        console.log("going to initialize buttons")
+        $("#nextBtn")
+            .click(() => {
+                console.log("NextBtn: going to send")
+                stompClient.send(`${topicGameTurnNext}.${gameInfo.gameId}`, {}, sessionId)
+                $("#nextBtn").hide()
+            })
+        $("#useCheatBtn")
+            .click(() => {
+                stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
+                $("#useCheatBtn").hide()
+            })
+        buttonsInitialized = true;
+    }
+
 }
 
 const updateGameStatus = (status) => {
@@ -57,7 +78,6 @@ const updateGameStatus = (status) => {
 }
 
 const getIcon = (figure) => {
-    console.log("getIcon: figure =", figure)
     return $('<img/>')
         .attr({
             src: `icons/${figure.icon}.png`,
@@ -106,10 +126,8 @@ const changeIconsState = (state) => {
         const icon = $(`#icon${i}`)
         if (icon.length > 0) {
             if (state) {
-                console.log("add disable for icon #", i, "; src = ", icon.attr("src"))
                 icon.prop("disabled", state)
             } else {
-                console.log("remove disable for icon #", i, "; src = ", icon.attr("src"))
                 icon.removeProp("disabled")
             }
         }
@@ -117,7 +135,10 @@ const changeIconsState = (state) => {
 }
 
 const turnStart = (turnInfo) => {
-    console.log("turnStart: turnInfo", turnInfo)
+    enableAllIcons()
+    $("#item1").empty()
+    $("#item2").empty()
+    $("#result").empty()
     $("#currentTurn").text(turnInfo.turn)
     $("#availCheats").text(turnInfo.availCheats)
     enableAllIcons()
@@ -136,6 +157,12 @@ const turnResult = (resultInfo) => {
 
     $("#money2").text(resultInfo.money2)
     $("#count2").text(resultInfo.count2)
+
+    const cheats = parseInt($("#availCheats").text().toString())
+    if (cheats > 0 && resultInfo.resultText === "<") {
+        $("#useCheatBtn").show()
+    }
+    $("#nextBtn").show()
 }
 
 const disconnect = () => {
@@ -149,5 +176,7 @@ $(function () {
     $("form").on('submit', (event) => {
         event.preventDefault();
     });
+    $("#nextBtn").hide()
+    $("#useCheatBtn").hide()
     start()
 });

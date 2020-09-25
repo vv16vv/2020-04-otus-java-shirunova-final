@@ -19,6 +19,7 @@ public final class Routes {
     public static final String API_GAME_JOIN = "/game-join.{sessionId}";
     public static final String API_GAME_HELLO = "/game-hello.{sessionId}";
     public static final String API_GAME_TURN_END = "/game-turn-end.{gameId}";
+    public static final String API_GAME_TURN_NEXT = "/game-turn-next.{gameId}";
 
     public static final String TOPIC = "/topic";
     // Sent messages

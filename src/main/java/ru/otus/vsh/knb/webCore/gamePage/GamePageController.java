@@ -18,8 +18,6 @@ import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.gamePage.data.*;
 
-import java.util.concurrent.BrokenBarrierException;
-
 @Controller
 @AllArgsConstructor
 @Slf4j
@@ -43,6 +41,7 @@ public class GamePageController {
 
     @MessageMapping(Routes.API_GAME_HELLO)
     public void loadData(@DestinationVariable String sessionId) {
+        log.warn("load data for sessionId {}", sessionId);
         val loggedInPerson = sessionKeeper.get(sessionId);
         if (loggedInPerson.isEmpty()) return;
         val gameData = gameDataKeeper.get(sessionId);
@@ -89,27 +88,25 @@ public class GamePageController {
 
     @MessageMapping(Routes.API_GAME_TURN_END)
     public void processTurn(@DestinationVariable long gameId, UITurnEnd turnEnd) {
+        log.warn("process turn for game {}, data {}", gameId, turnEnd);
         val gameData = gameDataKeeper.get(gameId);
         if (gameData.isEmpty()) throw new GameException(String.format("No game data for gameId %d", gameId));
         val turnData = gameDataKeeper.getTurnData(gameId);
         val person = sessionKeeper.get(turnEnd.getSessionId())
                 .orElseThrow(() -> new GameException("Player participates without session id"));
-        if (gameData.get().getPlayer1().equals(person)) {
+        if (gameData.get().getPlayer1().getId() == person.getId()) {
             turnData.figure1(turnEnd.getFigure());
         } else {
             turnData.figure2(turnEnd.getFigure());
         }
+        val currentTurn = turnData.currentTurn();
+        log.warn("turn data {} before barrier", turnData);
 
-        try {
-            turnData.barrier().await();
-        } catch (InterruptedException | BrokenBarrierException e) {
-            e.printStackTrace();
-        }
+        turnData.awaitBarrier();
 
-        if (!turnData.isProcessing()) {
+        if (currentTurn == turnData.currentTurn()) {
             synchronized (this) {
-                if (!turnData.isProcessing()) {
-                    turnData.isProcessing(true);
+                if (currentTurn == turnData.currentTurn()) {
                     switch (turnData.result()) {
                         case Player1Won: {
                             turnData
@@ -195,6 +192,39 @@ public class GamePageController {
                                 Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdObserver,
                                 resultInfo1);
                     });
+
+                    turnData.resetBarrier();
+                }
+            }
+        }
+    }
+
+    @MessageMapping(Routes.API_GAME_TURN_NEXT)
+    public void turnNext(@DestinationVariable long gameId, String sessionId) {
+        log.warn("process turn next for game {}, sessionId {}", gameId, sessionId);
+        val gameData = gameDataKeeper.get(gameId);
+        if (gameData.isEmpty()) throw new GameException(String.format("No game data for gameId %d", gameId));
+        val turnData = gameDataKeeper.getTurnData(gameId);
+        log.warn("turn data {} before barrier", turnData);
+
+        turnData.awaitBarrier();
+
+        if (turnData.figure1() != null || turnData.figure2() != null) {
+            synchronized (this) {
+                if (turnData.figure1() != null || turnData.figure2() != null) {
+                    val turnReady = UITurnReady.builder()
+                            .turn(turnData.currentTurn())
+                            .availCheats(turnData.availCheats())
+                            .get();
+                    log.warn("in synchro: turn ready {} ", turnReady);
+                    gameDataKeeper
+                            .byGameId(gameId)
+                            .forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_TURN_START + "." + id, turnReady));
+                    turnData.figure1(null);
+                    turnData.figure2(null);
+
+                    turnData.resetBarrier();
+                    log.warn("turn data {} before exit from synchro", turnData);
                 }
             }
         }
