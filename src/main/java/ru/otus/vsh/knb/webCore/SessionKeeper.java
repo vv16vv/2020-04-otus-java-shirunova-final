@@ -16,4 +16,6 @@ public interface SessionKeeper {
 
     String get(Person person);
 
+    void update(Person person);
+
 }

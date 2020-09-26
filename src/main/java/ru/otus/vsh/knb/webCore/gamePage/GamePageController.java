@@ -293,8 +293,7 @@ public class GamePageController {
         val message = gameControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
                 new UpdatePersonData(person), MessageType.UPDATE_PERSON,
-                replay -> {
-                }
+                replay -> sessionKeeper.update(((UpdatePersonData) replay).getPerson())
         );
         gameControllerMSClient.sendMessage(message);
     }

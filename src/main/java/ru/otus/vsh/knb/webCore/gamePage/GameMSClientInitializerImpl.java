@@ -20,7 +20,7 @@ public class GameMSClientInitializerImpl implements GameMSClientInitializer {
     public GameControllerMSClient gameControllerMSClient(MessageSystem messageSystem, CallbackRegistry callbackRegistry) {
         HandlersStore store = new HandlersStoreImpl();
         store.addHandler(MessageType.END_GAME, new CallbackCallRequestHandler<EndGameData, EmptyMessageData>(callbackRegistry));
-        store.addHandler(MessageType.UPDATE_PERSON, new CallbackCallRequestHandler<UpdatePersonData, EmptyMessageData>(callbackRegistry));
+        store.addHandler(MessageType.UPDATE_PERSON, new CallbackCallRequestHandler<UpdatePersonData, UpdatePersonData>(callbackRegistry));
         val gameControllerMSClient = new GameControllerMSClient(messageSystem, store, callbackRegistry);
         messageSystem.addClient(gameControllerMSClient);
 

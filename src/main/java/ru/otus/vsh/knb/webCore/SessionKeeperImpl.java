@@ -47,4 +47,10 @@ public class SessionKeeperImpl implements SessionKeeper {
         if (entries.isEmpty()) return "";
         else return entries.get(0).getKey();
     }
+
+    @Override
+    public synchronized void update(Person person) {
+        repository.put(get(person), person);
+    }
+
 }

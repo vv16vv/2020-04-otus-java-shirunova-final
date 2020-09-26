@@ -47,9 +47,14 @@ public class LobbyPageController {
 
     @GetMapping(Routes.LOBBY)
     public String getGamePage(Model model) {
-        Person loggedInPerson = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         val sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        sessionKeeper.add(sessionId, loggedInPerson);
+        Person loggedInPerson;
+        if (sessionKeeper.get(sessionId).isEmpty()) {
+            loggedInPerson = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            sessionKeeper.add(sessionId, loggedInPerson);
+        } else {
+            loggedInPerson = sessionKeeper.get(sessionId).get();
+        }
 
         model.addAttribute(TEMPLATE_PLAYER_NAME, loggedInPerson.getName());
         model.addAttribute(TEMPLATE_PLAYER_SUM, loggedInPerson.getAccount().getSum());
@@ -62,7 +67,7 @@ public class LobbyPageController {
     @MessageMapping(Routes.API_LOBBY_HELLO)
     public void loadData(@DestinationVariable String sessionId) {
         val loggedInPerson = sessionKeeper.get(sessionId);
-        if(loggedInPerson.isEmpty()) return;
+        if (loggedInPerson.isEmpty()) return;
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
                 new AvailableGamesForPersonData(loggedInPerson.get()), MessageType.AVAIL_GAMES,
