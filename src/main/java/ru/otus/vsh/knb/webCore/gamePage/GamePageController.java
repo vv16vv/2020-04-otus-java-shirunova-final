@@ -13,6 +13,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import ru.otus.vsh.knb.dbCore.model.EventResults;
 import ru.otus.vsh.knb.dbCore.model.Game;
 import ru.otus.vsh.knb.dbCore.model.Person;
+import ru.otus.vsh.knb.dbCore.model.Roles;
 import ru.otus.vsh.knb.domain.DefaultValues;
 import ru.otus.vsh.knb.domain.GameException;
 import ru.otus.vsh.knb.domain.msClient.data.EndGameData;
@@ -57,31 +58,56 @@ public class GamePageController {
         val gameData = gameDataKeeper.get(sessionId);
         if (gameData.isEmpty()) return;
         boolean isGameReady = false;
-        boolean isPlayer = loggedInPerson.get().equals(gameData.get().getPlayer1()) ||
-                (gameData.get().getPlayer2() != null && loggedInPerson.get().equals(gameData.get().getPlayer2()));
+        val loggedInPersonRole = gameData.get().getPersonRole(loggedInPerson.get());
+        boolean isPlayer = loggedInPersonRole == Roles.Player1 || loggedInPersonRole == Roles.Player2;
         val initialGameInfo = UIGameInitialInfo.builder()
                 .gameId(gameData.get().getGame().getId())
-                .playerName1(gameData.get().getPlayer1().getName())
                 .isPlayer(String.valueOf(isPlayer))
-                .money1(gameData.get().getPlayer1().getAccount().getSum())
                 .turns(gameData.get().getGame().getSettings().getNumberOfTurns())
                 .figures(UIFigure.from(gameData.get().getRule().getRange()))
                 .cheats(gameData.get().getGame().getSettings().getNumberOfCheats())
                 .bet(gameData.get().getWager());
+        UIGameUpdateInfo uiGameUpdateInfo = null;
         if (gameData.get().getPlayer2() != null) {
             isGameReady = true;
-            initialGameInfo
-                    .playerName2(gameData.get().getPlayer2().getName())
-                    .money2(gameData.get().getPlayer2().getAccount().getSum());
+            if (loggedInPersonRole == Roles.Player2) {
+                // if loaded person is player2, then the its name and money are shown from the left
+                initialGameInfo
+                        .playerName1(gameData.get().getPlayer2().getName())
+                        .money1(gameData.get().getPlayer2().getAccount().getSum())
+                        .playerName2(gameData.get().getPlayer1().getName())
+                        .money2(gameData.get().getPlayer1().getAccount().getSum());
+
+                uiGameUpdateInfo = UIGameUpdateInfo.builder()
+                        .playerName2(gameData.get().getPlayer2().getName())
+                        .money2(gameData.get().getPlayer2().getAccount().getSum())
+                        .get();
+            } else {
+                initialGameInfo
+                        .playerName1(gameData.get().getPlayer1().getName())
+                        .money1(gameData.get().getPlayer1().getAccount().getSum())
+                        .playerName2(gameData.get().getPlayer2().getName())
+                        .money2(gameData.get().getPlayer2().getAccount().getSum());
+            }
         } else {
+            // there is no player2, so it's evident that the player1 is the left one
             initialGameInfo
+                    .playerName1(gameData.get().getPlayer1().getName())
+                    .money1(gameData.get().getPlayer1().getAccount().getSum())
                     .playerName2("???")
                     .money2(0);
         }
 
         if (isPlayer) {
             val playersInGame = gameDataKeeper.byGameId(gameData.get().getGame().getId());
-            playersInGame.forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_INFO + "." + id, initialGameInfo.get()));
+            template.convertAndSend(Routes.TOPIC_GAME_INFO + "." + sessionId, initialGameInfo.get());
+            if (uiGameUpdateInfo != null) {
+                val sentData = uiGameUpdateInfo;
+                playersInGame.forEach(id -> {
+                    if (!id.equals(sessionId))
+                        template.convertAndSend(Routes.TOPIC_GAME_UPDATE + "." + id, sentData);
+                });
+            }
             if (isGameReady) {
                 val turnReady = UITurnReady.builder()
                         .turn(0)
@@ -276,7 +302,7 @@ public class GamePageController {
         gameControllerMSClient.sendMessage(message);
     }
 
-    private void endOfGame(@Nonnull TurnData turnData){
+    private void endOfGame(@Nonnull TurnData turnData) {
         // end of game
         String statusMessage;
         if (turnData.score1() > turnData.score2()) {

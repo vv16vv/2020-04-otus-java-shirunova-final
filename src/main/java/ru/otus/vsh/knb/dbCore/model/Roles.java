@@ -11,7 +11,8 @@ import java.util.Arrays;
 public enum Roles {
     Player1(1, "Игрок 1"),
     Player2(2, "Игрок 2"),
-    Observer(3, "Наблюдатель");
+    Observer(3, "Наблюдатель"),
+    NotParticipate(4, "Не участвует");
 
     @Getter
     private final int id;

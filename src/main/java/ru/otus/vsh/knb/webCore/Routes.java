@@ -27,6 +27,7 @@ public final class Routes {
     public static final String TOPIC_GAMES_UPD = "/topic/games-upd";
     public static final String TOPIC_GAME_STATUS = "/topic/game-status";
     public static final String TOPIC_GAME_INFO = "/topic/game-info";
+    public static final String TOPIC_GAME_UPDATE = "/topic/game-update";
     public static final String TOPIC_GAME_TURN_START = "/topic/game-turn-start";
     public static final String TOPIC_GAME_TURN_RESULT = "/topic/game-turn-result";
     public static final String TOPIC_GAME_END = "/topic/game-end";

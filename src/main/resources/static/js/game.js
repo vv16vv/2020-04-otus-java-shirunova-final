@@ -4,6 +4,7 @@ const websocketUrl = '/api/game-ws';
 const lobby = '/lobby'
 
 const topicGameInfo = '/topic/game-info';
+const topicGameUpdate = '/topic/game-update';
 const topicGameStatus = '/topic/game-status';
 const topicGameTurnStart = '/topic/game-turn-start';
 const topicGameTurnResult = '/topic/game-turn-result';
@@ -15,8 +16,6 @@ const topicGameTurnNext = '/api/game-turn-next';
 const topicGameUseCheat = '/api/game-use-cheat';
 const topicGameLeaveObserver = '/api/game-leave-observer';
 
-let buttonsInitialized = false;
-
 const start = () => {
     if (stompClient === null) {
         stompClient = Stomp.over(new SockJS(websocketUrl));
@@ -25,6 +24,7 @@ const start = () => {
             const sessionId = $("#sessionId").text().toString()
             console.log("start: sessionId = ", sessionId)
             stompClient.subscribe(`${topicGameInfo}.${sessionId}`, (gameInfo) => showInitialGameInfo(sessionId, JSON.parse(gameInfo.body)));
+            stompClient.subscribe(`${topicGameUpdate}.${sessionId}`, (updateInfo) => updateInitialGameInfo(JSON.parse(updateInfo.body)));
             stompClient.subscribe(`${topicGameStatus}.${sessionId}`, (status) => updateGameStatus(status.body));
             stompClient.subscribe(`${topicGameTurnStart}.${sessionId}`, (turnInfo) => turnStart(JSON.parse(turnInfo.body)));
             stompClient.subscribe(`${topicGameTurnResult}.${sessionId}`, (resultInfo) => turnResult(JSON.parse(resultInfo.body)));
@@ -59,33 +59,34 @@ const showInitialGameInfo = (sessionId, gameInfo) => {
 
     $("#gameBet").text(gameInfo.bet)
 
-    if (!buttonsInitialized) {
-        console.log("going to initialize buttons")
-        $("#nextBtn")
-            .click(() => {
-                console.log("NextBtn: going to send")
-                stompClient.send(`${topicGameTurnNext}.${gameInfo.gameId}`, {}, sessionId)
-                $("#nextBtn").hide()
-            })
-        $("#useCheatBtn")
-            .click(() => {
-                stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
-                $("#useCheatBtn").hide()
-            })
-        const exitBtn = $("#exitBtn")
-        exitBtn.click(() => {
-            if(!isPlayer){
-                stompClient.send(`${topicGameLeaveObserver}.${sessionId}.${gameInfo.gameId}`, {}, {})
-            }
-            disconnect()
-            window.location.replace(lobby)
+    console.log("going to initialize buttons")
+    $("#nextBtn")
+        .click(() => {
+            console.log("NextBtn: going to send")
+            stompClient.send(`${topicGameTurnNext}.${gameInfo.gameId}`, {}, sessionId)
+            $("#nextBtn").hide()
         })
-        if (isPlayer) {
-            exitBtn.hide()
+    $("#useCheatBtn")
+        .click(() => {
+            stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
+            $("#useCheatBtn").hide()
+        })
+    const exitBtn = $("#exitBtn")
+    exitBtn.click(() => {
+        if (!isPlayer) {
+            stompClient.send(`${topicGameLeaveObserver}.${sessionId}.${gameInfo.gameId}`, {}, {})
         }
-        buttonsInitialized = true;
+        disconnect()
+        window.location.replace(lobby)
+    })
+    if (isPlayer) {
+        exitBtn.hide()
     }
+}
 
+const updateInitialGameInfo = (updateInfo) => {
+    $("#playerName2").text(updateInfo.playerName2)
+    $("#money2").text(updateInfo.money2)
 }
 
 const updateGameStatus = (status) => {

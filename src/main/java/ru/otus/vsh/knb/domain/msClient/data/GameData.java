@@ -11,7 +11,10 @@ import ru.otus.vsh.knb.domain.GameRules;
 import ru.otus.vsh.knb.webCore.lobbyPage.AvailGameStyles;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Value
 @Builder(buildMethodName = "get")
@@ -42,11 +45,13 @@ public class GameData implements Comparable<GameData> {
         return Objects.compare(wager, o.wager, Comparator.comparingLong(value -> value));
     }
 
-    public Optional<Roles> getPersonRole(@Nonnull Person person) {
-        if (person.equals(player1)) return Optional.of(Roles.Player1);
-        if (person.equals(player2)) return Optional.of(Roles.Player2);
-        if (observers.contains(person)) return Optional.of(Roles.Observer);
-        return Optional.empty();
+    public Roles getPersonRole(@Nonnull Person person) {
+        if (person.getId() == player1.getId()) return Roles.Player1;
+        if ((player2 != null) && (person.getId() == player2.getId())) return Roles.Player2;
+        if (observers
+                .stream()
+                .anyMatch(observer -> observer.getId() == person.getId())) return Roles.Observer;
+        return Roles.NotParticipate;
     }
 
     public GameRule getRule() {
