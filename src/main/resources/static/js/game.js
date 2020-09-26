@@ -60,17 +60,19 @@ const showInitialGameInfo = (sessionId, gameInfo) => {
     $("#gameBet").text(gameInfo.bet)
 
     console.log("going to initialize buttons")
-    $("#nextBtn")
-        .click(() => {
-            console.log("NextBtn: going to send")
-            stompClient.send(`${topicGameTurnNext}.${gameInfo.gameId}`, {}, sessionId)
-            $("#nextBtn").hide()
-        })
-    $("#useCheatBtn")
-        .click(() => {
-            stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
-            $("#useCheatBtn").hide()
-        })
+    if (isPlayer) {
+        $("#nextBtn")
+            .click(() => {
+                console.log("NextBtn: going to send")
+                stompClient.send(`${topicGameTurnNext}.${gameInfo.gameId}`, {}, sessionId)
+                $("#nextBtn").hide()
+            })
+        $("#useCheatBtn")
+            .click(() => {
+                stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
+                $("#useCheatBtn").hide()
+            })
+    }
     const exitBtn = $("#exitBtn")
     exitBtn.click(() => {
         if (!isPlayer) {
@@ -174,11 +176,13 @@ const turnResult = (resultInfo) => {
     $("#money2").text(resultInfo.money2)
     $("#count2").text(resultInfo.count2)
 
-    const cheats = parseInt($("#availCheats").text().toString())
-    if (cheats > 0 && resultInfo.resultText === "<") {
-        $("#useCheatBtn").show()
+    if (resultInfo.isPlayer.toLowerCase() === "true") {
+        const cheats = parseInt($("#availCheats").text().toString())
+        if (cheats > 0 && resultInfo.resultText === "<") {
+            $("#useCheatBtn").show()
+        }
+        $("#nextBtn").show()
     }
-    $("#nextBtn").show()
 }
 
 const gameEnd = () => {

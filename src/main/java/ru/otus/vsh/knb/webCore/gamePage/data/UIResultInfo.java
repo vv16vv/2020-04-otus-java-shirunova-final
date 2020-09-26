@@ -12,6 +12,7 @@ public class UIResultInfo {
     UIFigure figure2;
     // relatively to the current player
     String resultText;
+    String isPlayer;
 
     // for current player
     long money1;

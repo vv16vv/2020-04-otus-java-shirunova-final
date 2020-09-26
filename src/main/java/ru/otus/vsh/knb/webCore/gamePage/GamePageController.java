@@ -182,7 +182,18 @@ public class GamePageController {
                     if (turnData.result().equals(EventResults.Player1Won)) resultText1 = UIEvent.GREATER.getTitle();
                     else if (turnData.result().equals(EventResults.Player2Won)) resultText1 = UIEvent.LESS.getTitle();
                     else resultText1 = UIEvent.EQUAL.getTitle();
-                    val resultInfo1 = UIResultInfo.builder()
+                    val resultInfoPlayer1 = UIResultInfo.builder()
+                            .isPlayer("true")
+                            .figure1(UIFigure.from(turnData.figure1()))
+                            .figure2(UIFigure.from(turnData.figure2()))
+                            .resultText(resultText1)
+                            .money1(turnData.gameData().getPlayer1().getAccount().getSum())
+                            .money2(turnData.gameData().getPlayer2().getAccount().getSum())
+                            .count1(turnData.score1())
+                            .count2(turnData.score2())
+                            .get();
+                    val resultInfoObserver = UIResultInfo.builder()
+                            .isPlayer("false")
                             .figure1(UIFigure.from(turnData.figure1()))
                             .figure2(UIFigure.from(turnData.figure2()))
                             .resultText(resultText1)
@@ -197,7 +208,8 @@ public class GamePageController {
                     else if (turnData.result().equals(EventResults.Player2Won))
                         resultText2 = UIEvent.GREATER.getTitle();
                     else resultText2 = UIEvent.EQUAL.getTitle();
-                    val resultInfo2 = UIResultInfo.builder()
+                    val resultInfoPlayer2 = UIResultInfo.builder()
+                            .isPlayer("true")
                             .figure1(UIFigure.from(turnData.figure2()))
                             .figure2(UIFigure.from(turnData.figure1()))
                             .resultText(resultText2)
@@ -211,18 +223,18 @@ public class GamePageController {
                     val sessionIdPlayer1 = sessionKeeper.get(turnData.gameData().getPlayer1());
                     template.convertAndSend(
                             Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer1,
-                            resultInfo1);
+                            resultInfoPlayer1);
 
                     val sessionIdPlayer2 = sessionKeeper.get(turnData.gameData().getPlayer2());
                     template.convertAndSend(
                             Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer2,
-                            resultInfo2);
+                            resultInfoPlayer2);
 
                     turnData.gameData().getObservers().forEach(p -> {
                         val sessionIdObserver = sessionKeeper.get(p);
                         template.convertAndSend(
                                 Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdObserver,
-                                resultInfo1);
+                                resultInfoObserver);
                     });
 
                     if (turnData.currentTurn() >= turnData.gameData().getGame().getSettings().getNumberOfTurns()) {
@@ -348,6 +360,5 @@ public class GamePageController {
                     Routes.TOPIC_GAME_END + "." + sessionIdPlayer,
                     "");
         });
-
     }
 }
