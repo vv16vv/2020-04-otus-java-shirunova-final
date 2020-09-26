@@ -11,12 +11,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import ru.otus.vsh.knb.dbCore.model.EventResults;
+import ru.otus.vsh.knb.dbCore.model.Game;
+import ru.otus.vsh.knb.dbCore.model.Person;
 import ru.otus.vsh.knb.domain.DefaultValues;
 import ru.otus.vsh.knb.domain.GameException;
+import ru.otus.vsh.knb.domain.msClient.data.EndGameData;
+import ru.otus.vsh.knb.domain.msClient.data.UpdatePersonData;
+import ru.otus.vsh.knb.msCore.MsClientNames;
+import ru.otus.vsh.knb.msCore.message.MessageType;
 import ru.otus.vsh.knb.webCore.GameDataKeeper;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.gamePage.data.*;
+
+import javax.annotation.Nonnull;
 
 @Controller
 @AllArgsConstructor
@@ -111,36 +119,32 @@ public class GamePageController {
                 if (currentTurn == turnData.currentTurn()) {
                     switch (turnData.result()) {
                         case Player1Won: {
-                            turnData
-                                    .gameData()
-                                    .getPlayer1()
-                                    .getAccount()
-                                    .increase(DefaultValues.GOLD_ONE_TURN);
+                            updatePersonAccount(
+                                    turnData.gameData().getPlayer1(),
+                                    DefaultValues.GOLD_ONE_TURN_WIN
+                            );
                             turnData.increaseScore1(DefaultValues.POINTS_WINNING);
                             turnData.increaseScore2(DefaultValues.POINTS_LOSING);
                             break;
                         }
                         case Player2Won: {
-                            turnData
-                                    .gameData()
-                                    .getPlayer2()
-                                    .getAccount()
-                                    .increase(DefaultValues.GOLD_ONE_TURN);
+                            updatePersonAccount(
+                                    turnData.gameData().getPlayer2(),
+                                    DefaultValues.GOLD_ONE_TURN_WIN
+                            );
                             turnData.increaseScore2(DefaultValues.POINTS_WINNING);
                             turnData.increaseScore1(DefaultValues.POINTS_LOSING);
                             break;
                         }
                         default: {
-                            turnData
-                                    .gameData()
-                                    .getPlayer1()
-                                    .getAccount()
-                                    .increase(DefaultValues.GOLD_ONE_DRAW);
-                            turnData
-                                    .gameData()
-                                    .getPlayer2()
-                                    .getAccount()
-                                    .increase(DefaultValues.GOLD_ONE_DRAW);
+                            updatePersonAccount(
+                                    turnData.gameData().getPlayer1(),
+                                    DefaultValues.GOLD_ONE_TURN_DRAW
+                            );
+                            updatePersonAccount(
+                                    turnData.gameData().getPlayer2(),
+                                    DefaultValues.GOLD_ONE_TURN_DRAW
+                            );
                             turnData.increaseScore1(DefaultValues.POINTS_DRAW);
                             turnData.increaseScore2(DefaultValues.POINTS_DRAW);
                             break;
@@ -195,6 +199,10 @@ public class GamePageController {
                                 resultInfo1);
                     });
 
+                    if (turnData.currentTurn() >= turnData.gameData().getGame().getSettings().getNumberOfTurns()) {
+                        endOfGame(turnData);
+                    }
+
                     turnData.resetBarrier();
                 }
             }
@@ -232,4 +240,88 @@ public class GamePageController {
         }
     }
 
+
+    @MessageMapping(Routes.API_GAME_LEAVE_OBSERVER)
+    public void leaveObserver(@DestinationVariable String sessionId, @DestinationVariable long gameId) {
+        val gameData = gameDataKeeper.get(gameId);
+        if (gameData.isEmpty()) throw new GameException(String.format("No game data for gameId %d", gameId));
+        val person = sessionKeeper.get(sessionId)
+                .orElseThrow(() -> new GameException("Player participates without session id"));
+        gameData.get().getObservers().remove(person);
+    }
+
+    private void updatePersonAccount(@Nonnull Person person, Long delta) {
+        person.getAccount().increase(delta);
+        val message = gameControllerMSClient.produceMessage(
+                MsClientNames.DATA_BASE.name(),
+                new UpdatePersonData(person), MessageType.UPDATE_PERSON,
+                replay -> {
+                }
+        );
+        gameControllerMSClient.sendMessage(message);
+    }
+
+    private void closeGame(@Nonnull Game game, EventResults result) {
+        game.setCompleted(true);
+        game.setActualResult(result.id());
+        val endGameData = EndGameData.builder()
+                .game(game)
+                .get();
+        val message = gameControllerMSClient.produceMessage(
+                MsClientNames.DATA_BASE.name(),
+                endGameData, MessageType.END_GAME,
+                replay -> {
+                }
+        );
+        gameControllerMSClient.sendMessage(message);
+    }
+
+    private void endOfGame(@Nonnull TurnData turnData){
+        // end of game
+        String statusMessage;
+        if (turnData.score1() > turnData.score2()) {
+            updatePersonAccount(
+                    turnData.gameData().getPlayer1(),
+                    DefaultValues.GOLD_ONE_GAME_WIN
+            );
+            closeGame(turnData.gameData().getGame(), EventResults.Player1Won);
+            statusMessage = String.format(
+                    "Игру выиграл(а) %s! Он(а) получит %d золота",
+                    turnData.gameData().getPlayer1().getName(),
+                    DefaultValues.GOLD_ONE_GAME_WIN
+            );
+        } else if (turnData.score1() < turnData.score2()) {
+            updatePersonAccount(
+                    turnData.gameData().getPlayer2(),
+                    DefaultValues.GOLD_ONE_GAME_WIN
+            );
+            closeGame(turnData.gameData().getGame(), EventResults.Player2Won);
+            statusMessage = String.format(
+                    "Игру выиграл(а) %s! Он(а) получит %d золота",
+                    turnData.gameData().getPlayer2().getName(),
+                    DefaultValues.GOLD_ONE_GAME_WIN
+            );
+        } else {
+            updatePersonAccount(
+                    turnData.gameData().getPlayer1(),
+                    DefaultValues.GOLD_ONE_GAME_DRAW
+            );
+            updatePersonAccount(
+                    turnData.gameData().getPlayer2(),
+                    DefaultValues.GOLD_ONE_GAME_DRAW
+            );
+            closeGame(turnData.gameData().getGame(), EventResults.Draw);
+            statusMessage = String.format("Увы, ничья. Каждый получит по %d", DefaultValues.GOLD_ONE_GAME_DRAW);
+        }
+
+        gameDataKeeper.byGameId(turnData.gameData().getGame().getId()).forEach(sessionIdPlayer -> {
+            template.convertAndSend(
+                    Routes.TOPIC_GAME_STATUS + "." + sessionIdPlayer,
+                    statusMessage);
+            template.convertAndSend(
+                    Routes.TOPIC_GAME_END + "." + sessionIdPlayer,
+                    "");
+        });
+
+    }
 }

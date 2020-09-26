@@ -4,6 +4,7 @@ public enum MessageType {
     VOID,
     GET_PLAYER_BY_LOGIN,
     NEW_PLAYER,
+    UPDATE_PERSON,
     PLAYERS,
     AVAIL_GAMES,
     NEW_GAME,

@@ -1,16 +1,19 @@
 let stompClient = null;
 
 const websocketUrl = '/api/game-ws';
+const lobby = '/lobby'
 
 const topicGameInfo = '/topic/game-info';
 const topicGameStatus = '/topic/game-status';
 const topicGameTurnStart = '/topic/game-turn-start';
 const topicGameTurnResult = '/topic/game-turn-result';
+const topicGameEnd = '/topic/game-end';
 
 const topicGameHello = '/api/game-hello';
 const topicGameTurnEnd = '/api/game-turn-end';
 const topicGameTurnNext = '/api/game-turn-next';
 const topicGameUseCheat = '/api/game-use-cheat';
+const topicGameLeaveObserver = '/api/game-leave-observer';
 
 let buttonsInitialized = false;
 
@@ -25,6 +28,7 @@ const start = () => {
             stompClient.subscribe(`${topicGameStatus}.${sessionId}`, (status) => updateGameStatus(status.body));
             stompClient.subscribe(`${topicGameTurnStart}.${sessionId}`, (turnInfo) => turnStart(JSON.parse(turnInfo.body)));
             stompClient.subscribe(`${topicGameTurnResult}.${sessionId}`, (resultInfo) => turnResult(JSON.parse(resultInfo.body)));
+            stompClient.subscribe(`${topicGameEnd}.${sessionId}`, () => gameEnd());
 
             stompClient.send(`${topicGameHello}.${sessionId}`, {}, {})
         });
@@ -68,6 +72,17 @@ const showInitialGameInfo = (sessionId, gameInfo) => {
                 stompClient.send(`${topicGameUseCheat}.${sessionId}.${gameInfo.gameId}`, {}, {})
                 $("#useCheatBtn").hide()
             })
+        const exitBtn = $("#exitBtn")
+        exitBtn.click(() => {
+            if(!isPlayer){
+                stompClient.send(`${topicGameLeaveObserver}.${sessionId}.${gameInfo.gameId}`, {}, {})
+            }
+            disconnect()
+            window.location.replace(lobby)
+        })
+        if (isPlayer) {
+            exitBtn.hide()
+        }
         buttonsInitialized = true;
     }
 
@@ -163,6 +178,11 @@ const turnResult = (resultInfo) => {
         $("#useCheatBtn").show()
     }
     $("#nextBtn").show()
+}
+
+const gameEnd = () => {
+    $("#figures").hide()
+    $("#exitBtn").show()
 }
 
 const disconnect = () => {

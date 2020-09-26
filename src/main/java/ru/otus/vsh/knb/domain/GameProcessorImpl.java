@@ -1,6 +1,7 @@
 package ru.otus.vsh.knb.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Component;
 import ru.otus.vsh.knb.dbCore.dbService.*;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
+@Slf4j
 public class GameProcessorImpl implements GameProcessor {
     private final DBServicePerson dbServicePerson;
     private final DBServiceGame dbServiceGame;
@@ -30,7 +32,7 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
-    public Person addNewPlayer(String login, String name, String password, long initialSum) {
+    public synchronized Person addNewPlayer(String login, String name, String password, long initialSum) {
         val person = dbServicePerson
                 .findByLogin(login)
                 .orElse(Person.builder()
@@ -74,7 +76,7 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
-    public Optional<Game> startNewGame(@Nonnull Person person, @Nonnull GameSettings settings, long wager) {
+    public synchronized Optional<Game> startNewGame(@Nonnull Person person, @Nonnull GameSettings settings, long wager) {
         if (person.getAccount().getSum() < wager) return Optional.empty();
         return Optional.of(dbServiceGame.createNewGame(person, settings, wager));
     }
@@ -145,7 +147,7 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
-    public GameData joinGameAsPlayer(@Nonnull Game game, @Nonnull Person person) {
+    public synchronized GameData joinGameAsPlayer(@Nonnull Game game, @Nonnull Person person) {
         val bet = betForGame(game);
         if (bet.isPresent() && !person.canAfford(bet.get().getWager()))
             throw new GameException(String.format("Person %s cannot afford wager %d", person.getLogin(), bet.get().getWager()));
@@ -160,7 +162,7 @@ public class GameProcessorImpl implements GameProcessor {
     }
 
     @Override
-    public GameData joinGameAsObserver(@Nonnull Game game, @Nonnull Person person) {
+    public synchronized GameData joinGameAsObserver(@Nonnull Game game, @Nonnull Person person) {
         dbServicePersonsInGames.joinGame(game, person, Roles.Observer);
         val bet = betForGame(game);
         return GameData.builder()
@@ -223,4 +225,17 @@ public class GameProcessorImpl implements GameProcessor {
                 .map(personsInGames -> dbServiceBet.findCommonBet(pig1.get(), personsInGames).isPresent())
                 .orElseGet(() -> dbServiceBet.findGameBet(pig1.get(), pig2).isPresent());
     }
+
+    @Override
+    public synchronized void endGame(@Nonnull Game game) {
+        log.info("Going to save changes in game: {}", game);
+        dbServiceGame.saveObject(game);
+        // TODO: search and process bets
+    }
+
+    @Override
+    public synchronized void updatePlayerAccount(@Nonnull Person person) {
+        dbServicePerson.saveObject(person);
+    }
+
 }

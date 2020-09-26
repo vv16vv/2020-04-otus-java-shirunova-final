@@ -48,4 +48,8 @@ public interface GameProcessor {
     boolean makeBet(@Nonnull Game game, @Nonnull Person person1, @Nonnull Person person2, long wager, @Nonnull EventResults expectedResult);
 
     boolean isBet(@Nonnull Game game, @Nonnull Person person1, @Nonnull Person person2);
+
+    void endGame(@Nonnull Game game);
+
+    void updatePlayerAccount(@Nonnull Person person);
 }

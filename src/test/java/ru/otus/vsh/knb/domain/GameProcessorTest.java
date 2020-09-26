@@ -391,4 +391,32 @@ public class GameProcessorTest extends BaseDaoTest {
         assertThat(updatedForthPlayer.getAccount().getSum()).isEqualTo(moneyAfterBet);
 
     }
+
+    @Test
+    public void updatePlayerAccountPositive() {
+        val expectedSum = 600L;
+        val firstPlayer = gameProcessor.addNewPlayer(firstLogin, firstName, firstPassword);
+        firstPlayer.getAccount().increase(100L);
+        gameProcessor.updatePlayerAccount(firstPlayer);
+
+        assertThat(firstPlayer.getAccount().getSum()).isEqualTo(expectedSum);
+
+        val theSamePlayer = dbServicePerson.findByLogin(firstLogin);
+        assertThat(theSamePlayer).isPresent();
+        assertThat(theSamePlayer.get().getAccount().getSum()).isEqualTo(expectedSum);
+    }
+
+    @Test
+    public void updatePlayerAccountNegative() {
+        val expectedSum = 400L;
+        val firstPlayer = gameProcessor.addNewPlayer(firstLogin, firstName, firstPassword);
+        firstPlayer.getAccount().decrease(100L);
+        gameProcessor.updatePlayerAccount(firstPlayer);
+
+        assertThat(firstPlayer.getAccount().getSum()).isEqualTo(expectedSum);
+
+        val theSamePlayer = dbServicePerson.findByLogin(firstLogin);
+        assertThat(theSamePlayer).isPresent();
+        assertThat(theSamePlayer.get().getAccount().getSum()).isEqualTo(expectedSum);
+    }
 }
