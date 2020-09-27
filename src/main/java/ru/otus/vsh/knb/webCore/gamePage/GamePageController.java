@@ -177,6 +177,8 @@ public class GamePageController {
                         }
                     }
 
+                    val isLastTurn = String.valueOf((turnData.currentTurn() + 1) == turnData.gameData().getGame().getSettings().getNumberOfTurns());
+
                     // result for Player1 and observers
                     String resultText1;
                     if (turnData.result().equals(EventResults.Player1Won)) resultText1 = UIEvent.GREATER.getTitle();
@@ -187,6 +189,7 @@ public class GamePageController {
                             .figure1(UIFigure.from(turnData.figure1()))
                             .figure2(UIFigure.from(turnData.figure2()))
                             .resultText(resultText1)
+                            .isLastTurn(isLastTurn)
                             .money1(turnData.gameData().getPlayer1().getAccount().getSum())
                             .money2(turnData.gameData().getPlayer2().getAccount().getSum())
                             .count1(turnData.score1())
@@ -197,6 +200,7 @@ public class GamePageController {
                             .figure1(UIFigure.from(turnData.figure1()))
                             .figure2(UIFigure.from(turnData.figure2()))
                             .resultText(resultText1)
+                            .isLastTurn(isLastTurn)
                             .money1(turnData.gameData().getPlayer1().getAccount().getSum())
                             .money2(turnData.gameData().getPlayer2().getAccount().getSum())
                             .count1(turnData.score1())
@@ -213,6 +217,7 @@ public class GamePageController {
                             .figure1(UIFigure.from(turnData.figure2()))
                             .figure2(UIFigure.from(turnData.figure1()))
                             .resultText(resultText2)
+                            .isLastTurn(isLastTurn)
                             .money1(turnData.gameData().getPlayer2().getAccount().getSum())
                             .money2(turnData.gameData().getPlayer1().getAccount().getSum())
                             .count1(turnData.score2())

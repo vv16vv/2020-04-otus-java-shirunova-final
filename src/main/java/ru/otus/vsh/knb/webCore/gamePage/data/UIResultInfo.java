@@ -13,6 +13,8 @@ public class UIResultInfo {
     // relatively to the current player
     String resultText;
     String isPlayer;
+    @Builder.Default
+    String isLastTurn = "false";
 
     // for current player
     long money1;

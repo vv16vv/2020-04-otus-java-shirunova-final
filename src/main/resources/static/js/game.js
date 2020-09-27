@@ -181,13 +181,19 @@ const turnResult = (resultInfo) => {
     $("#money2").text(resultInfo.money2)
     $("#count2").text(resultInfo.count2)
 
-    if (resultInfo.isPlayer.toLowerCase() === "true") {
+    if (toBoolean(resultInfo.isPlayer)) {
         const cheats = parseInt($("#availCheats").text().toString())
         if (cheats > 0 && resultInfo.resultText === "<") {
             $("#useCheatBtn").show()
         }
-        $("#nextBtn").show()
+        if (!toBoolean(resultInfo.isLastTurn)) {
+            $("#nextBtn").show()
+        }
     }
+}
+
+const toBoolean = (stringValue) => {
+    return stringValue.toLowerCase() === "true"
 }
 
 const gameEnd = () => {
