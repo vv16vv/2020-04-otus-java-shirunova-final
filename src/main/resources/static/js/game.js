@@ -23,11 +23,17 @@ const start = () => {
             console.log('Connected: ' + frame);
             const sessionId = $("#sessionId").text().toString()
             console.log("start: sessionId = ", sessionId)
+            // Первичная загрузка данных
             stompClient.subscribe(`${topicGameInfo}.${sessionId}`, (gameInfo) => showInitialGameInfo(sessionId, JSON.parse(gameInfo.body)));
+            // Информация о втором игроке для первого игрока
             stompClient.subscribe(`${topicGameUpdate}.${sessionId}`, (updateInfo) => updateInitialGameInfo(JSON.parse(updateInfo.body)));
+            // Обновление статуса игры. Ни на что больше не влияет
             stompClient.subscribe(`${topicGameStatus}.${sessionId}`, (status) => updateGameStatus(status.body));
+            // Начало хода: активируем иконки, показываем номер текущего хода и кол-во доступных выручаек
             stompClient.subscribe(`${topicGameTurnStart}.${sessionId}`, (turnInfo) => turnStart(JSON.parse(turnInfo.body)));
+            // Обновление экрана по результатам хода, показываем ход противника и кнопку дальше (если не последний ход)
             stompClient.subscribe(`${topicGameTurnResult}.${sessionId}`, (resultInfo) => turnResult(JSON.parse(resultInfo.body)));
+            // Обновление экрана по концу игры
             stompClient.subscribe(`${topicGameEnd}.${sessionId}`, () => gameEnd());
 
             stompClient.send(`${topicGameHello}.${sessionId}`, {}, {})
@@ -56,10 +62,10 @@ const showInitialGameInfo = (sessionId, gameInfo) => {
     $("#availCheats").text(gameInfo.cheats)
 
     gameInfo.figures.forEach(figure => makeIcon(sessionId, gameInfo.gameId, figure, isPlayer))
+    disableAllIcons()
 
     $("#gameBet").text(gameInfo.bet)
 
-    console.log("going to initialize buttons")
     if (isPlayer) {
         $("#nextBtn")
             .click(() => {
@@ -153,7 +159,6 @@ const changeIconsState = (state) => {
 }
 
 const turnStart = (turnInfo) => {
-    enableAllIcons()
     $("#item1").empty()
     $("#item2").empty()
     $("#result").empty()
@@ -186,7 +191,6 @@ const turnResult = (resultInfo) => {
 }
 
 const gameEnd = () => {
-    $("#figures").hide()
     $("#exitBtn").show()
 }
 

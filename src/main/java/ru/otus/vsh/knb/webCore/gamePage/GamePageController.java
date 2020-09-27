@@ -110,7 +110,7 @@ public class GamePageController {
             }
             if (isGameReady) {
                 val turnReady = UITurnReady.builder()
-                        .turn(0)
+                        .turn(1)
                         .availCheats(initialGameInfo.get().getCheats())
                         .get();
                 playersInGame.forEach(id -> template.convertAndSend(Routes.TOPIC_GAME_TURN_START + "." + id, turnReady));
