@@ -30,12 +30,12 @@ public class DataInitializerImpl implements DataInitializer {
     @Override
     public void createInitialData() {
         val player1 = gameProcessor.addNewPlayer("vitkus", "Виктория", passwordEncoder.encode("12345"));
-        val player2 = gameProcessor.addNewPlayer("sevantius", "Всеволод", passwordEncoder.encode("11111"));
-        val player3 = gameProcessor.addNewPlayer("koshir", "Константин", passwordEncoder.encode("24680"));
-        val player4 = gameProcessor.addNewPlayer("lanaelle", "Елена", passwordEncoder.encode("99899"), 1000L);
-        val player5 = gameProcessor.addNewPlayer("krosider", "Евгений", passwordEncoder.encode("75775"), 1000L);
-        val player6 = gameProcessor.addNewPlayer("barabashka", "Ольга", passwordEncoder.encode("1"));
-        val player7 = gameProcessor.addNewPlayer("retsam", "Петр", passwordEncoder.encode("1"));
+        val player2 = gameProcessor.addNewPlayer("sevantius", "Всеволод", passwordEncoder.encode("12345"));
+        val player3 = gameProcessor.addNewPlayer("koshir", "Константин", passwordEncoder.encode("12345"));
+        val player4 = gameProcessor.addNewPlayer("lanaelle", "Елена", passwordEncoder.encode("12345"), 1000L);
+        val player5 = gameProcessor.addNewPlayer("krosider", "Евгений", passwordEncoder.encode("12345"), 1000L);
+        val player6 = gameProcessor.addNewPlayer("barabashka", "Ольга", passwordEncoder.encode("12345"));
+        val player7 = gameProcessor.addNewPlayer("retsam", "Петр", passwordEncoder.encode("12345"));
 
         // default game, without second player, without bet
         // participants: player5 as a first player

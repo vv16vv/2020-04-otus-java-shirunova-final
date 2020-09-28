@@ -143,6 +143,7 @@ public class GamePageController {
         if (currentTurn == turnData.currentTurn()) {
             synchronized (this) {
                 if (currentTurn == turnData.currentTurn()) {
+                    String statusMessage;
                     switch (turnData.result()) {
                         case Player1Won: {
                             updatePersonAccount(
@@ -151,6 +152,7 @@ public class GamePageController {
                             );
                             turnData.increaseScore1(DefaultValues.POINTS_WINNING);
                             turnData.increaseScore2(DefaultValues.POINTS_LOSING);
+                            statusMessage = String.format("Раунд выиграл(а) %s", turnData.gameData().getPlayer1().getName());
                             break;
                         }
                         case Player2Won: {
@@ -160,6 +162,7 @@ public class GamePageController {
                             );
                             turnData.increaseScore2(DefaultValues.POINTS_WINNING);
                             turnData.increaseScore1(DefaultValues.POINTS_LOSING);
+                            statusMessage = String.format("Раунд выиграл(а) %s", turnData.gameData().getPlayer2().getName());
                             break;
                         }
                         default: {
@@ -173,6 +176,7 @@ public class GamePageController {
                             );
                             turnData.increaseScore1(DefaultValues.POINTS_DRAW);
                             turnData.increaseScore2(DefaultValues.POINTS_DRAW);
+                            statusMessage = "Раунд закончился ничьей";
                             break;
                         }
                     }
@@ -229,17 +233,26 @@ public class GamePageController {
                     template.convertAndSend(
                             Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer1,
                             resultInfoPlayer1);
+                    template.convertAndSend(
+                            Routes.TOPIC_GAME_STATUS + "." + sessionIdPlayer1,
+                            statusMessage);
 
                     val sessionIdPlayer2 = sessionKeeper.get(turnData.gameData().getPlayer2());
                     template.convertAndSend(
                             Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdPlayer2,
                             resultInfoPlayer2);
+                    template.convertAndSend(
+                            Routes.TOPIC_GAME_STATUS + "." + sessionIdPlayer2,
+                            statusMessage);
 
                     turnData.gameData().getObservers().forEach(p -> {
                         val sessionIdObserver = sessionKeeper.get(p);
                         template.convertAndSend(
                                 Routes.TOPIC_GAME_TURN_RESULT + "." + sessionIdObserver,
                                 resultInfoObserver);
+                        template.convertAndSend(
+                                Routes.TOPIC_GAME_STATUS + "." + sessionIdObserver,
+                                statusMessage);
                     });
 
                     if (turnData.currentTurn() >= turnData.gameData().getGame().getSettings().getNumberOfTurns()) {
@@ -266,7 +279,7 @@ public class GamePageController {
             synchronized (this) {
                 if (turnData.figure1() != null || turnData.figure2() != null) {
                     val turnReady = UITurnReady.builder()
-                            .turn(turnData.currentTurn())
+                            .turn(turnData.currentTurn() + 1)
                             .availCheats(turnData.availCheats())
                             .get();
                     log.warn("in synchro: turn ready {} ", turnReady);
