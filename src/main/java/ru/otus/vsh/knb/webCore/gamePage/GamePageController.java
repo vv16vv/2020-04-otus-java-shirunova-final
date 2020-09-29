@@ -337,36 +337,41 @@ public class GamePageController {
         if (turnData.score1() > turnData.score2()) {
             updatePersonAccount(
                     turnData.gameData().getPlayer1(),
-                    DefaultValues.GOLD_ONE_GAME_WIN
+                    DefaultValues.GOLD_ONE_GAME_WIN + turnData.gameData().getWager() * 2
             );
             closeGame(turnData.gameData().getGame(), EventResults.Player1Won);
             statusMessage = String.format(
-                    "Игру выиграл(а) %s! Он(а) получит %d золота",
+                    "Игру выиграл(а) %s! Он(а) получит %d золота за игру и %d золота за ставку",
                     turnData.gameData().getPlayer1().getName(),
-                    DefaultValues.GOLD_ONE_GAME_WIN
+                    DefaultValues.GOLD_ONE_GAME_WIN,
+                    turnData.gameData().getWager() * 2
             );
         } else if (turnData.score1() < turnData.score2()) {
             updatePersonAccount(
                     turnData.gameData().getPlayer2(),
-                    DefaultValues.GOLD_ONE_GAME_WIN
+                    DefaultValues.GOLD_ONE_GAME_WIN + turnData.gameData().getWager() * 2
             );
             closeGame(turnData.gameData().getGame(), EventResults.Player2Won);
             statusMessage = String.format(
-                    "Игру выиграл(а) %s! Он(а) получит %d золота",
+                    "Игру выиграл(а) %s! Он(а) получит %d золота за игру и %d золота за ставку",
                     turnData.gameData().getPlayer2().getName(),
-                    DefaultValues.GOLD_ONE_GAME_WIN
+                    DefaultValues.GOLD_ONE_GAME_WIN,
+                    turnData.gameData().getWager() * 2
             );
         } else {
             updatePersonAccount(
                     turnData.gameData().getPlayer1(),
-                    DefaultValues.GOLD_ONE_GAME_DRAW
+                    DefaultValues.GOLD_ONE_GAME_DRAW + turnData.gameData().getWager()
             );
             updatePersonAccount(
                     turnData.gameData().getPlayer2(),
-                    DefaultValues.GOLD_ONE_GAME_DRAW
+                    DefaultValues.GOLD_ONE_GAME_DRAW + turnData.gameData().getWager()
             );
             closeGame(turnData.gameData().getGame(), EventResults.Draw);
-            statusMessage = String.format("Увы, ничья. Каждый получит по %d", DefaultValues.GOLD_ONE_GAME_DRAW);
+            statusMessage = String.format(
+                    "Увы, ничья. Каждый получит по %d золота и свою ставку %d золота обратно",
+                    DefaultValues.GOLD_ONE_GAME_DRAW,
+                    turnData.gameData().getWager());
         }
 
         gameDataKeeper.byGameId(turnData.gameData().getGame().getId()).forEach(sessionIdPlayer -> {

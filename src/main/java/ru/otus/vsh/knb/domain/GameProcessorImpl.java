@@ -230,7 +230,11 @@ public class GameProcessorImpl implements GameProcessor {
     public synchronized void endGame(@Nonnull Game game) {
         log.info("Going to save changes in game: {}", game);
         dbServiceGame.saveObject(game);
-        // TODO: search and process bets
+        val bet = betForGame(game);
+        if(bet.isPresent()){
+            bet.get().setClosed(true);
+            dbServiceBet.saveObject(bet.get());
+        }
     }
 
     @Override
