@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link rel="stylesheet" href="/knb.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/js/lobby.js"></script>
@@ -22,12 +24,59 @@
 </div>
 <div>На счету [[${playerSum}]] <i class="far fa-money-bill-alt"></i></div>
 <div id="sessionId" th:text="${sessionId}" hidden></div>
-<div id="playerLogin" th:text="${playerLogin}" hidden></div>
 <div class="container">Можно начать новую игру
-    <input id="newGameBtn"
-           type="button"
-           class="btn btn-primary"
-           value="Новая игра"/></div>
+    <input
+            id="runSettings"
+            type="button"
+            class="btn btn-primary"
+            value="Новая игра"
+    />
+</div>
+<div class="modal" id="newGameDialog">
+    <div class="modal-dialog">
+        <div class="modal-content dialogBackground">
+            <div class="modal-header">
+                <h4 class="modal-title">Настройки</h4>
+                <button type="button" class="close" style="color: azure;" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="layoutTable" style="width: 100%">
+                    <tr>
+                        <td style="width: 20%"><label for="nItems">Элементы</label></td>
+                        <td><input id="nItems" type="range" class="form-control-range" style="width: 80%; display: inline"
+                                   min="3" max="15" step="2" value="3" data-toggle="tooltip">
+                            <label id="chosenItems">3</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="nTurns">Раунды</label></td>
+                        <td><input id="nTurns" type="range" class="form-control-range" style="width: 80%; display: inline"
+                                   min="3" max="30" step="1" value="3" data-toggle="tooltip">
+                            <label id="chosenTurns">3</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="nCheats">Выручайки</label></td>
+                        <td><label id="nCheats">0</label></td>
+                    </tr>
+                    <tr>
+                        <td><label for="nBet">Ставка</label></td>
+                        <td><input id="nBet" type="number" class="form-control" min="0" th:max="${playerSum}"
+                                   step="100" value="0" style="width: 80%; display: inline">
+                            &nbsp;
+                            <label id="chosenBet"></label>
+                            &nbsp;<i class="far fa-money-bill-alt"></i></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="newGameBtn" type="button" class="btn btn-primary" data-dismiss="modal">Создать</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<br/>
 <div class="container">Или присоединиться к существующей:
     <form>
         <div class="col-8">

@@ -38,13 +38,16 @@ const start = () => {
             console.log('Connected: ' + frame);
             const sessionId = $("#sessionId").text().toString()
             console.log("start: sessionId = ", sessionId)
-            const playerLogin = $("#playerLogin").text().toString()
-            console.log("start: playerLogin = ", playerLogin)
             stompClient.subscribe(`${topicGames}.${sessionId}`, (games) => showGames(JSON.parse(games.body)));
             stompClient.subscribe(`${topicGamesUpd}.${sessionId}`, (game) => updateGame(JSON.parse(game.body)));
 
             $("#newGameBtn").click(() => {
-                stompClient.send(`${topicGameStart}.${sessionId}`, {}, {})
+                stompClient.send(`${topicGameStart}.${sessionId}`, {}, JSON.stringify({
+                    'items': $("#chosenItems").text(),
+                    'turns': $("#chosenTurns").text(),
+                    'cheats': $("#nCheats").text(),
+                    'bet': $("#chosenBet").text()
+                }))
                 disconnect()
                 window.location.replace(topGame)
             })
@@ -135,10 +138,24 @@ const disconnect = () => {
     console.log("Disconnected");
 }
 
+const setTooltip = (prefix, item, value, label) => {
+    item["title"] = `${prefix} ${value}`
+    label.text(value)
+}
+
 $(function () {
     $("form").on('submit', (event) => {
         event.preventDefault();
     });
+    $("#runSettings").click(() => $("#newGameDialog").modal())
+    $("#nItems").change((e) => setTooltip("Элементов", e.target, e.target.value, $("#chosenItems")));
+    $("#nTurns").change((e) => {
+        setTooltip("Раундов", e.target, e.target.value, $("#chosenTurns"));
+        $("#nCheats").text(Math.floor(parseInt(e.target.value) / 4))
+    });
+    $("#nBet").change((e) => {
+        setTooltip("Ставка", e.target, e.target.value, $("#chosenBet"));
+    });
+    $(document).ready(() => $('[data-toggle="tooltip"]').tooltip())
     start()
-    // setConnected(false);
 });

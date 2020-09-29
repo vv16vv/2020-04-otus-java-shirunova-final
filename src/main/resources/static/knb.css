@@ -117,3 +117,7 @@ a:hover {
     font-size: smaller;
     font-style: italic;
 }
+
+.dialogBackground {
+    background-color: darkblue;
+}

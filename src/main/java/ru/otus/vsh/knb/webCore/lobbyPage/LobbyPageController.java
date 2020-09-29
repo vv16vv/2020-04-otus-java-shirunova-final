@@ -20,6 +20,7 @@ import ru.otus.vsh.knb.webCore.GameDataKeeper;
 import ru.otus.vsh.knb.webCore.Routes;
 import ru.otus.vsh.knb.webCore.SessionKeeper;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameData;
+import ru.otus.vsh.knb.webCore.lobbyPage.data.UIGameSettingsData;
 import ru.otus.vsh.knb.webCore.lobbyPage.data.UIJoinGameData;
 
 import java.util.Collections;
@@ -90,11 +91,18 @@ public class LobbyPageController {
     }
 
     @MessageMapping(Routes.API_GAME_START)
-    public void startGame(@DestinationVariable String sessionId) {
+    public void startGame(@DestinationVariable String sessionId, UIGameSettingsData gameSettingsData) {
         val loggedInPerson = sessionKeeper.get(sessionId).orElseThrow(() -> new GameException("Session ID without a player"));
+        val newGameData = NewGameData.builder()
+                .player1(loggedInPerson)
+                .items(Integer.parseInt(gameSettingsData.getItems()))
+                .turns(Integer.parseInt(gameSettingsData.getTurns()))
+                .cheats(Integer.parseInt(gameSettingsData.getCheats()))
+                .wager(Integer.parseInt(gameSettingsData.getBet()))
+                .get();
         val message = lobbyControllerMSClient.produceMessage(
                 MsClientNames.DATA_BASE.name(),
-                NewGameData.builder().player1(loggedInPerson).get(), MessageType.NEW_GAME,
+                newGameData, MessageType.NEW_GAME,
                 replay -> {
                     val gameData = ((OneGameReplyData) replay).getGameData();
                     val newGame = new UIGameData(
