@@ -107,7 +107,9 @@ const getIcon = (figure) => {
             src: `icons/${figure.icon}.png`,
             class: 'rounded-circle',
             disabled: true,
-            alt: figure.itemName
+            alt: figure.itemName,
+            'data-toggle': 'tooltip',
+            title: figure.itemName
         })
 }
 
@@ -213,5 +215,8 @@ $(function () {
     });
     $("#nextBtn").hide()
     $("#useCheatBtn").hide()
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
     start()
 });
