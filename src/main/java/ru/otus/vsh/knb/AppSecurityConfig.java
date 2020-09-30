@@ -41,7 +41,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(Routes.NEW_PLAYER).permitAll()
+                    .antMatchers(Routes.NEW_PLAYER, Routes.PLAYERS).permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()
