@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="ru" content="text/html;">
+<head>
+    <title>Administration</title>
+    <meta charset="utf-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="/knb.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+<div class="top">
+    <a th:href="@{${signon}}">Завести нового пользователя</a>
+    <br/>
+    <a th:href="@{${players}}">Все пользователи</a>
+    <h3>Войдите, чтобы начать игру:</h3>
+    <form id="login-form" th:action="@{${login}}" method="post" accept-charset="utf-8">
+        <table class="layoutTable">
+            <tr style="width: 20%">
+                <th><label for="username">Логин</label></th>
+                <td><input id="username" name="username" type="text" value="vitkus" class="form-control"/></td>
+            </tr>
+            <tr>
+                <th><label for="password">Пароль</label></th>
+                <td><input id="password" name="password" type="password" value="12345" class="form-control"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Войти" class="btn btn-primary"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>

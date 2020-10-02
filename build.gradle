@@ -1,0 +1,77 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.3.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+    id 'idea'
+}
+
+group = 'ru.otus.vsh'
+version = '0.0.1-SNAPSHOT'
+
+java.sourceCompatibility = JavaVersion.VERSION_13
+java.targetCompatibility = JavaVersion.VERSION_13
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic")
+
+    implementation("com.h2database:h2")
+    implementation("org.hibernate:hibernate-core")
+    implementation "com.google.guava:guava:$ORG_GRADLE_PROJECT_guava_version"
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    implementation("org.webjars:webjars-locator-core")
+    implementation("org.webjars:sockjs-client:${ORG_GRADLE_PROJECT_sockjs}")
+    implementation("org.webjars:stomp-websocket:${ORG_GRADLE_PROJECT_stomp}")
+    implementation("org.webjars:bootstrap:${ORG_GRADLE_PROJECT_bootstrap}")
+
+    implementation 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+dependencyManagement {
+    dependencies {
+        imports {
+            mavenBom("org.junit:junit-bom:$ORG_GRADLE_PROJECT_junit_version")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.6.RELEASE")
+        }
+    }
+}
+
+

@@ -1,0 +1,123 @@
+table .layoutTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.borderedTable {
+    border: 1px solid azure;
+}
+
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+
+input, select {
+    width: 100%;
+}
+
+body {
+    background-color: darkblue;
+    color: azure;
+    padding: 20px;
+    margin: 10px;
+}
+
+.mistake {
+    color: firebrick;
+}
+
+a:link, a:visited, a:active {
+    color: azure;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #eddc33;
+    text-decoration: underline;
+}
+
+.availableToPlay {
+    color: aquamarine;
+    font-weight: bold;
+}
+
+.availableToPlay:hover {
+    color: darkblue;
+    background-color: aquamarine;
+    font-weight: bold;
+}
+
+.availableToObserve {
+    color: lightskyblue;
+    font-weight: bold;
+}
+
+.availableToObserve:hover {
+    color: darkblue;
+    background-color: lightskyblue;
+    font-weight: bold;
+}
+
+.notAvailable {
+    color: mistyrose;
+}
+
+.notAvailable:hover {
+    color: darkblue;
+    background-color: mistyrose;
+}
+
+.topRow {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.gameMoneyLeft {
+    color: lightgray;
+    font-size: smaller;
+    text-align: left;
+}
+
+.gameMoneyRight {
+    color: lightgray;
+    font-size: smaller;
+    text-align: right;
+}
+
+.gameTitle {
+    color: azure;
+    font-weight: bold;
+    font-size: x-large;
+    text-align: center;
+}
+
+.gameTextCenter {
+    color: azure;
+    font-size: medium;
+    text-align: center;
+}
+
+.gameTextLeft {
+    color: azure;
+    font-size: medium;
+    text-align: left;
+}
+
+.gameTextRight {
+    color: azure;
+    font-size: medium;
+    text-align: right;
+}
+
+.gameStatus {
+    font-size: smaller;
+    font-style: italic;
+}
+
+.dialogBackground {
+    background-color: darkblue;
+}
